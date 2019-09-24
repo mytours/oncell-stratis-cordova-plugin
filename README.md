@@ -1,0 +1,1 @@
+# oncell-stratis-cordova-plugin
