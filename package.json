@@ -1,0 +1,21 @@
+{
+  "name": "oncell-stratis-cordova-plugin",
+  "cordova_name": "OnCell Stratis Cordova Plugin",
+  "version": "1.0.0",
+  "cordova": {
+    "id": "oncell-stratis-cordova-plugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keenbart/oncell-stratis-cordova-plugin.git"
+  },
+  "author": "Keenan Bartlett",
+  "bugs": {
+    "url": "https://github.com/keenbart/oncell-stratis-cordova-plugin/issues"
+  },
+  "description": "A plugin to integrate the StratIS bluetooth lock API with the OnCell platform"
+}
