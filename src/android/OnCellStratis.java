@@ -52,7 +52,7 @@ public class OnCellStratis extends CordovaPlugin {
                 this.getLocks(property, callbackContext);
                 return true;
             case scanLocks:
-                Long seconds = args.getLong(0)
+                Long seconds = args.getLong(0);
                 this.scanLocks(seconds, callbackContext);
                 return true;
             case activateLock:
