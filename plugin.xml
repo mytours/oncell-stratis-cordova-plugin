@@ -33,7 +33,7 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/com/oncell/OnCellStratis.java" target-dir="src/com/oncell/"/>
+        <source-file src="src/android/OnCellStratis.java" target-dir="src/com/oncell/"/>
     </platform>
 
     <!-- ios -->
