@@ -109,8 +109,8 @@ public class OnCellStratis extends CordovaPlugin {
         }
     }
     
-    public void scanLocks(int seconds, CallbackContext callbackContext) {
-        if (seconds != null && seconds > 0) {
+    public void scanLocks(Long seconds, CallbackContext callbackContext) {
+        if (seconds > 0) {
             this._scanLocks(seconds);
             JSONObject r = new JSONObject();
             try {
