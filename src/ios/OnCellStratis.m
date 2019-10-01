@@ -39,7 +39,7 @@
 - (void)scanLocks:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    NSInteger seconds = [command.arguments numberAtIndex:0];
+    NSString* seconds = [command.arguments objectAtIndex:0];
     [self _scanLocks:seconds];
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"{\"success\": 1}"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -71,8 +71,9 @@
     // call StratisSDK getLocks
 }
 
-- (void) _scanLocks:(NSInteger) seconds
+- (void) _scanLocks:(NSString*) seconds
 {
+    // cast seconds to Long
     // call StratisSDK setServerEnvironment
 }
 
@@ -80,3 +81,5 @@
 {
     // call StratisSDK activateLock
 }
+
+@end
