@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
-    private String manifestUrl;
+    private String accessToken;
   
     public OnCellStratis() {
         super();
@@ -90,7 +90,7 @@ public class OnCellStratis extends CordovaPlugin {
             }
             callbackContext.success(r.toString());
         } else {
-            callbackContext.error("Expected an access code");
+            callbackContext.error("Expected an access token");
         }
     }
     
