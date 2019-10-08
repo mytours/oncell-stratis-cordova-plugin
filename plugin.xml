@@ -43,8 +43,9 @@
                 <param name="ios-package" value="OnCellStratis" onload="true"/>
             </feature>
         </config-file>
-        <header-file src="src/ios/OnCellStratis.h"/>
-        <source-file src="src/ios/OnCellStratis.m"/>
+        <source-file src="src/ios/OnCellStratis.swift">
+        <!-- <header-file src="src/ios/OnCellStratis.h"/>
+        <source-file src="src/ios/OnCellStratis.m"/> -->
         <!-- TODO configure this framework correctly -->
         <!-- <framework src="StratisSDK.framework"/> -->
     </platform>
