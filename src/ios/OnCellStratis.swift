@@ -1,3 +1,5 @@
+import StratisSDK
+
 @objc(OnCellStratis) class OnCellStratis : CDVPlugin {
     
   @objc(setAccessToken:)
