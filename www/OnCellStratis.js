@@ -2,13 +2,13 @@ var exec = require('cordova/exec');
 
 var PLUGIN_NAME = 'OnCellStratis';
 
-// Implements the methods at https://developer.stratisiot.com/sdk/ios/classes/StratisSDK/#methods
+// Implements the methods at https://developer.stratisiot.com/sdk/ios/classes/StratisSDK/#methods and
+// https://developer.stratisiot.com/sdk/android/com.stratisiot.stratissdk/-stratis-s-d-k/
 var OnCellStratis = {
   
   setServerEnvironment: function(serverEnvironment, callback) {
     /* return format:
      * {"success": "1"} */
-    console.log("OnCellStratis.setServerEnvironment");
     exec(function(response) {
       callback(JSON.parse(response));
     }, function(err) {
@@ -19,7 +19,6 @@ var OnCellStratis = {
   setAccessToken: function(accessToken, callback) {
     /* return format:
      * {"success": "1"} */
-    console.log("OnCellStratis.setAccessToken");
     exec(function(response) {
       callback(JSON.parse(response));
     }, function(err) {
@@ -30,7 +29,6 @@ var OnCellStratis = {
   getLocks: function(property, callback) {
     /* return format:
      * {"success": "1"} */
-    console.log("OnCellStratis.getLocks");
     exec(function(response) {
       callback(JSON.parse(response));
     }, function(err) {
@@ -41,7 +39,6 @@ var OnCellStratis = {
   scanLocks: function(seconds, callback) {
     /* return format:
      * {"success": "1"} */
-    console.log("OnCellStratis.scanLocks");
     exec(function(response) {
       callback(JSON.parse(response));
     }, function(err) {
@@ -52,7 +49,6 @@ var OnCellStratis = {
   activateLock: function(lockId, callback) {
     /* return format:
      * {"success": "1"} */
-    console.log("OnCellStratis.activateLock");
     exec(function(response) {
       callback(JSON.parse(response));
     }, function(err) {
