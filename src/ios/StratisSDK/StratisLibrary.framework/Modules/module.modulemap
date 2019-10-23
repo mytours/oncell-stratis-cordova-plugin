@@ -1,0 +1,8 @@
+framework module "Stratislibrary" {
+	header "ref.h"
+    header "Stratislibrary.objc.h"
+    header "Universe.objc.h"
+    header "Stratislibrary.h"
+
+    export *
+}

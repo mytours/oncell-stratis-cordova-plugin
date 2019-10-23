@@ -1,0 +1,6 @@
+framework module LegicMobileSdk {
+  umbrella header "LegicMobileSdk.h"
+
+  export *
+  module * { export * }
+}

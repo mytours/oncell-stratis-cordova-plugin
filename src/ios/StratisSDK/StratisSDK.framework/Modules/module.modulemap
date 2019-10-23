@@ -1,0 +1,11 @@
+framework module StratisSDK {
+  umbrella header "StratisSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module StratisSDK.Swift {
+    header "StratisSDK-Swift.h"
+    requires objc
+}
