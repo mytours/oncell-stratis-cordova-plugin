@@ -15,10 +15,15 @@
 @class StratislibraryAdvertisedSecurityVersion;
 @class StratislibraryAuthTokenParameters;
 @class StratislibraryAuthenticationStates;
+@class StratislibraryBrivoBleCredResponse;
 @class StratislibraryBrivoBleLockData;
+@class StratislibraryBrivoDataTransferNotification;
 @class StratislibraryBrivoNotificationState;
 @class StratislibraryBrivoTransmissionState;
 @class StratislibraryBrivoUnlockCommandResponse;
+@class StratislibraryCommand;
+@class StratislibraryCommandOutput;
+@class StratislibraryCommandResponse;
 @class StratislibraryDataTransferServiceGatt;
 @class StratislibraryEngageLockData;
 @class StratislibraryErrorStates;
@@ -29,6 +34,7 @@
 @class StratislibraryPayloadTypes;
 @class StratislibraryProtocolBlockData;
 @class StratislibraryStatusResponse;
+@class StratislibraryTokenResponse;
 @class StratislibraryUnlockCommandResponse;
 @protocol StratislibraryNativeLogger;
 @class StratislibraryNativeLogger;
@@ -106,6 +112,19 @@ any length or data has been transferred, a one-byte ACK/NAK is sent.
 @end
 
 /**
+ * BrivoBleCredResponse structures response from brivoBleCredEndpoint
+ */
+@interface StratislibraryBrivoBleCredResponse : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) long brivoUserID;
+@property (nonatomic) NSString* _Nonnull brivoBleCred;
+@end
+
+/**
  * BrivoBleLockData gives a structure for the lock based on the advertisement data
  */
 @interface StratislibraryBrivoBleLockData : NSObject <goSeqRefInterface> {
@@ -115,6 +134,21 @@ any length or data has been transferred, a one-byte ACK/NAK is sent.
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nonnull instancetype)init;
 @property (nonatomic) NSString* _Nonnull serialNumber;
+@end
+
+/**
+ * BrivoDataTransferNotification records the message sent from the lock during the connection process
+ */
+@interface StratislibraryBrivoDataTransferNotification : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) long success;
+@property (nonatomic) long failedTransmission;
+@property (nonatomic) long badCRC;
+@property (nonatomic) long repeat;
 @end
 
 /**
@@ -157,6 +191,39 @@ any length or data has been transferred, a one-byte ACK/NAK is sent.
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nonnull instancetype)init;
 @property (nonatomic) NSData* _Nullable command;
+@end
+
+@interface StratislibraryCommand : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) double seqNum;
+@property (nonatomic) BOOL prefectch;
+// skipped field Command.SvrCmds with unsupported type: []string
+
+@end
+
+@interface StratislibraryCommandOutput : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+// skipped field CommandOutput.SvrCmds with unsupported type: []string
+
+@end
+
+@interface StratislibraryCommandResponse : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) int16_t status;
+// skipped field CommandResponse.Command with unsupported type: stratislibrary.Command
+
 @end
 
 /**
@@ -335,6 +402,16 @@ firmware files, door databases, configurations, authentication tokens, and wifi 
 @property (nonatomic) NSString* _Nonnull detailedMessage;
 @end
 
+@interface StratislibraryTokenResponse : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) int16_t status;
+@property (nonatomic) NSString* _Nonnull token;
+@end
+
 /**
  * UnlockCommandResponse is the response object that contains the command and sequence number coming from the server side
  */
@@ -397,9 +474,25 @@ FOUNDATION_EXPORT const int64_t StratislibraryBluetoothSuccessCode;
  */
 FOUNDATION_EXPORT const int64_t StratislibraryBrivoActivationFailureCode;
 /**
- * Brivo locks responses
+ * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryBrivoActivationSuccessCode;
+/**
+ * Brivo locks responses
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoConnectingCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoConnectionFailureCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoConnectionSuccessCode;
+/**
+ * Brivo BLE constants
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoDisconnectMS;
 /**
  * StatusResponse codes
  */
@@ -408,6 +501,10 @@ FOUNDATION_EXPORT const int64_t StratislibraryBrivoIDNotFoundCode;
  * BrivoIdentifierString is found in the BLE advertisement and identifies that it is a Brivo lock
  */
 FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryBrivoIdentifierString;
+/**
+ * Brivo BLE constants
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoMTUValue;
 /**
  * Brivo BLE constants
  */
@@ -420,6 +517,14 @@ FOUNDATION_EXPORT const int64_t StratislibraryBrivoReservedNonce;
  * Exported constants
  */
 FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryBrivoServiceID;
+/**
+ * Brivo BLE constants
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoTimeoutMS;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryBrivoUnlockCommandRetrievalFailed;
 /**
  * Brivo BLE constants
  */
@@ -793,6 +898,10 @@ FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryTempKeyExpiresAtKey;
  */
 FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryTempKeyKey;
 /**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryUnauthorizedCode;
+/**
  * Unknown error
  */
 FOUNDATION_EXPORT const int64_t StratislibraryUnknownErrorCode;
@@ -810,8 +919,6 @@ FOUNDATION_EXPORT const int64_t StratislibraryUnlockTimeout;
 FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryUserUIDKey;
 
 @interface Stratislibrary : NSObject
-// skipped variable BrivoEndOfTransmission with unsupported type: [5]byte
-
 // skipped variable StatusResponses with unsupported type: map[int64]*stratislibrary.StatusResponse
 
 @end
@@ -900,7 +1007,17 @@ FOUNDATION_EXPORT StratislibraryAuthenticationStates* _Nullable StratislibraryGe
 /**
  * GetBrivoBLEUnlockCommand called from Native. Gets unlock command and returns unlock byte stream
  */
-FOUNDATION_EXPORT StratislibraryBrivoUnlockCommandResponse* _Nullable StratislibraryGetBrivoBLEUnlockCommand(long brivoDoorID, long brivoUserID, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT StratislibraryBrivoUnlockCommandResponse* _Nullable StratislibraryGetBrivoBLEUnlockCommand(long brivoDoorID, NSError* _Nullable* _Nullable error);
+
+/**
+ * GetBrivoDataTransferNotification gives an object with the Data Transfer Notification constants
+ */
+FOUNDATION_EXPORT StratislibraryBrivoDataTransferNotification* _Nullable StratislibraryGetBrivoDataTransferNotification(void);
+
+/**
+ * GetBrivoEndTransmissionMessage returns End of Tranmission message sent back from Brivo smart reader indicating end of BLE transmission.
+ */
+FOUNDATION_EXPORT NSData* _Nullable StratislibraryGetBrivoEndTransmissionMessage(void);
 
 /**
  * GetBrivoNotificationState gives an object with the Operation State constants
