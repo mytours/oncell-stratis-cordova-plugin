@@ -66,9 +66,19 @@ import StratisSDK
     
     @objc(getLocks:)
     func getLocks(command: CDVInvokedUrlCommand) {
+        
+        let propertyId = command.arguments[0] as? String ?? ""
+        
+        let callback = StratisSDKCallback()
+        stratisSdk.getLocks(property: propertyId, callback: callback)
+        
+        let message = "{\"success\": 1, \"propertyId\": \"\(propertyId)\"}"
+        
         let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_ERROR
+            status: CDVCommandStatus_OK,
+            messageAs: message
         )
+        
         self.commandDelegate!.send(
             pluginResult,
             callbackId: command.callbackId
@@ -77,9 +87,17 @@ import StratisSDK
     
     @objc(scanLocks:)
     func scanLocks(command: CDVInvokedUrlCommand) {
+        
+        let callback = StratisSDKCallback()
+        stratisSdk.scanLocks(seconds: 30, callback: callback)
+        
+        let message = "{\"success\": 1}"
+        
         let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_ERROR
+            status: CDVCommandStatus_OK,
+            messageAs: message
         )
+        
         self.commandDelegate!.send(
             pluginResult,
             callbackId: command.callbackId
@@ -88,9 +106,18 @@ import StratisSDK
     
     @objc(activateLock:)
     func activateLock(command: CDVInvokedUrlCommand) {
+        let lockId = command.arguments[0] as? String ?? ""
+        
+        let callback = StratisSDKCallback()
+        stratisSdk.activateLock(lockId: lockId, callback: callback)
+        
+        let message = "{\"success\": 1, \"lockId\": \"\(lockId)\"}"
+        
         let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_ERROR
+            status: CDVCommandStatus_OK,
+            messageAs: message
         )
+        
         self.commandDelegate!.send(
             pluginResult,
             callbackId: command.callbackId
