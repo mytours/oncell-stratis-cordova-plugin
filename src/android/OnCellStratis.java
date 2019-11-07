@@ -15,7 +15,6 @@ import android.util.Log;
 
 import com.stratisiot.stratissdk.StratisSDK;
 import com.stratisiot.stratissdk.StratisSDK.ResultCallback;
-import com.toursphere.oncellstratis.MainActivity;
 
 public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
