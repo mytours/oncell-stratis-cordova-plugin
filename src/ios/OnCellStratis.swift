@@ -50,7 +50,8 @@ import StratisSDK
                 self.locks = locks.compactMap({ Lock(fromResponse: $0) })
             },
                 doneCallback: { (_) in
-                    let message = "{\"success\": 1}" // Change this to include gotten locks in response
+                    let locksJson = self.getLocksAsJson()
+                    let message = "{\"success\": 1, \"locks\": \(locksJson)}"
                     let pluginResult = CDVPluginResult(
                         status: CDVCommandStatus_OK,
                         messageAs: message
@@ -88,7 +89,8 @@ import StratisSDK
                 lock.enable(lock: scannedLock)
             },
                 doneCallback: { (_) in
-                    let message = "{\"success\": 1}" // Change this to include scanned locks in response
+                    let locksJson = self.getLocksAsJson()
+                    let message = "{\"success\": 1, \"locks\": \(locksJson)}"
                     let pluginResult = CDVPluginResult(
                         status: CDVCommandStatus_OK,
                         messageAs: message
@@ -147,6 +149,16 @@ import StratisSDK
         
         stratisSdk.activateLock(lockId: lockId, appointmentId: appointmentId, callback: callback)
     }
+    
+    @objc(getLocksAsJson)
+    func getLocksAsJson() -> String {
+        var jsonString = "[]"
+        let encoder = JSONEncoder()
+        if let jsonData = try? encoder.encode(self.locks) {
+            jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+        }
+        return jsonString
+    }
 }
 
 class StratisSDKCallback: ResultCallback {
@@ -196,12 +208,12 @@ class StratisSDKCallback: ResultCallback {
 }
 
 
-class Lock {
+class Lock: Codable{
     var lockId: String
     var name: String
     var model: String
     var unlockTechnology: String
-    var rssi: NSNumber?
+    var rssi: Int
     var isEnabled = false
     
     init?(fromResponse res: [String: Any]) {
@@ -215,11 +227,11 @@ class Lock {
         self.name = name
         self.model = model
         self.unlockTechnology = unlockTechnology
-        rssi = res["rssi"] as? NSNumber
+        self.rssi = res["rssi"] as? Int ?? 0
     }
     
     func enable(lock: Lock) {
-        isEnabled = true
-        rssi = lock.rssi
+        self.isEnabled = true
+        self.rssi = lock.rssi
     }
 }
