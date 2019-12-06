@@ -7,57 +7,32 @@ import StratisSDK
     
     @objc(pluginInitialize)
     override func pluginInitialize() {
-        let callback = StratisSDKCallback { (message) in
-            NSLog(message);
-        }
-        stratisSdk = StratisSDK(initCallback: callback)
     }
     
-    @objc(setAccessToken:)
-    func setAccessToken(command: CDVInvokedUrlCommand) {
-        
-        let accessToken = command.arguments[0] as? String ?? ""
-        
-        let callback = StratisSDKCallback()
-        stratisSdk.setAccessToken(token: accessToken, callback: callback)
-        
-        //    var pluginResult = CDVPluginResult(
-        //      status: CDVCommandStatus_ERROR
-        //    )
-        
-        let message = "{\"success\": 1, \"accessToken\": \"\(accessToken)\"}"
-        
-        let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_OK,
-            messageAs: message
-        )
-        
-        self.commandDelegate!.send(
-            pluginResult,
-            callbackId: command.callbackId
-        )
-    }
-    
-    @objc(setServerEnvironment:)
-    func setServerEnvironment(command: CDVInvokedUrlCommand) {
-        
+    @objc(initSDK:)
+    func initSDK(command: CDVInvokedUrlCommand) {
         let serverEnvironmentString = command.arguments[0] as? String ?? ""
-        let serverEnvironment = ServerEnvironment(rawValue: serverEnvironmentString)!
+        let accessToken = command.arguments[1] as? String ?? ""
         
-        let callback = StratisSDKCallback()
-        stratisSdk.setServerEnvironment(environment: serverEnvironment, callback: callback)
+        var serverEnv = ServerEnvironment.SANDBOX; // Sandbox by default
+        if (serverEnvironmentString == "PROD") {
+            serverEnv = ServerEnvironment.PROD;
+        }
         
-        //    var pluginResult = CDVPluginResult(
-        //      status: CDVCommandStatus_ERROR
-        //    )
+        let configuration = Configuration(
+            serverEnvironment: serverEnv,
+            accessToken: accessToken,
+            remoteLoggingEnabled: true,
+            loggingMetadata: ["app": "OnCell"]
+        )
         
-        let message = "{\"success\": 1, \"serverEnvironment\": \"\(serverEnvironmentString)\"}"
+        stratisSdk = StratisSDK(configuration: configuration)
         
+        let message = "{\"success\": 1}"
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
             messageAs: message
         )
-        
         self.commandDelegate!.send(
             pluginResult,
             callbackId: command.callbackId
@@ -69,64 +44,112 @@ import StratisSDK
         
         let propertyId = command.arguments[0] as? String ?? ""
         
-        let callback = StratisSDKCallback()
+        let callback = StratisSDKCallback(
+            resultCallback: { (res) in
+                guard let locks = res["locks"] as? [[String: Any]] else { return }
+                self.locks = locks.compactMap({ Lock(fromResponse: $0) })
+            },
+                doneCallback: { (_) in
+                    let message = "{\"success\": 1}" // Change this to include gotten locks in response
+                    let pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_OK,
+                        messageAs: message
+                    )
+                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            },
+                errorCallback: { (err) in
+                    var message = "{\"success\": \"error\": \"Unable to get locks\"}"
+                    if let errorMessage = err["message"] as? String {
+                        message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
+                    }
+                    let pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_ERROR,
+                        messageAs: message
+                    )
+                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            }
+        )
+        
         stratisSdk.getLocks(property: propertyId, callback: callback)
-        
-        let message = "{\"success\": 1, \"propertyId\": \"\(propertyId)\"}"
-        
-        let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_OK,
-            messageAs: message
-        )
-        
-        self.commandDelegate!.send(
-            pluginResult,
-            callbackId: command.callbackId
-        )
     }
     
     @objc(scanLocks:)
     func scanLocks(command: CDVInvokedUrlCommand) {
         
-        let callback = StratisSDKCallback()
-        stratisSdk.scanLocks(seconds: 30, callback: callback)
+        let seconds = command.arguments[0] as? Double ?? 0
         
-        let message = "{\"success\": 1}"
-        
-        let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_OK,
-            messageAs: message
+        let callback = StratisSDKCallback(
+            resultCallback: { (res) in
+                guard
+                    let lockResponse = res["lock"] as? [String: Any],
+                    let scannedLock = Lock(fromResponse: lockResponse),
+                    let lock = self.locks.first(where: { $0.lockId == scannedLock.lockId })
+                    else { return }
+                lock.enable(lock: scannedLock)
+            },
+                doneCallback: { (_) in
+                    let message = "{\"success\": 1}" // Change this to include scanned locks in response
+                    let pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_OK,
+                        messageAs: message
+                    )
+                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            },
+                errorCallback: { (err) in
+                    var message = "{\"success\": \"error\": \"Unable to scan locks\"}"
+                    if let errorMessage = err["message"] as? String {
+                        message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
+                    }
+                    let pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_ERROR,
+                        messageAs: message
+                    )
+                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            }
         )
         
-        self.commandDelegate!.send(
-            pluginResult,
-            callbackId: command.callbackId
-        )
+        stratisSdk.scanLocks(seconds: seconds, callback: callback)
     }
     
     @objc(activateLock:)
     func activateLock(command: CDVInvokedUrlCommand) {
         let lockId = command.arguments[0] as? String ?? ""
+        let appointmentId = command.arguments[1] as? String ?? ""
         
-        let callback = StratisSDKCallback()
-        stratisSdk.activateLock(lockId: lockId, callback: callback)
-        
-        let message = "{\"success\": 1, \"lockId\": \"\(lockId)\"}"
-        
-        let pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_OK,
-            messageAs: message
+        let callback = StratisSDKCallback(
+            resultCallback: { (res) in
+                let resultMessage = res["message"] as? String ?? ""
+                if (resultMessage == "ACTIVATION_SUCCESS") {
+                    let message = "{\"success\": 1}" //
+                    let pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_OK,
+                        messageAs: message
+                    )
+                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+                }
+            },
+            doneCallback: { (_) in
+                // Ignore done callbacks here since more than one is sent in the process of activating
+                // Use ACTIVATION_SUCCESS result callback instead
+            },
+            errorCallback: { (err) in
+                var message = "{\"success\": \"error\": \"Unable to activate lock\"}"
+                if let errorMessage = err["message"] as? String {
+                     message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
+                }
+                let pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_ERROR,
+                    messageAs: message
+                )
+                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
+            }
         )
         
-        self.commandDelegate!.send(
-            pluginResult,
-            callbackId: command.callbackId
-        )
+        stratisSdk.activateLock(lockId: lockId, appointmentId: appointmentId, callback: callback)
     }
 }
 
-
-struct StratisSDKCallback: ResultCallback {
+class StratisSDKCallback: ResultCallback {
     let resultCallback: (([String: Any]) -> Void)?
     let doneCallback: (([String: Any]) -> Void)?
     let errorCallback: (([String: Any]) -> Void)?

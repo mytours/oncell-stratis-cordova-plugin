@@ -1,4 +1,6 @@
 *.aar filter=lfs diff=lfs merge=lfs -text
-src/ios/StratisSDK/LegicMobileSdk.framework/LegicMobileSdk filter=lfs diff=lfs merge=lfs -text
-src/ios/StratisSDK/StratisLibrary.framework/Stratislibrary filter=lfs diff=lfs merge=lfs -text
 src/ios/StratisSDK/StratisSDK.framework/StratisSDK filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/StratisSDK.framework/LegicMobileSdk.framework/LegicMobileSdk filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/StratisSDK.framework/Frameworks/LegicMobileSdk.framework/LegicMobileSdk filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/StratisSDK.framework/StratisLibrary.framework/StratisLibrary filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/StratisSDK.framework/Frameworks/StratisLibrary.framework/StratisLibrary filter=lfs diff=lfs merge=lfs -text

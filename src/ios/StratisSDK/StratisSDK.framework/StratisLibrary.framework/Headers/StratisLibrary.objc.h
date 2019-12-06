@@ -21,9 +21,6 @@
 @class StratislibraryBrivoNotificationState;
 @class StratislibraryBrivoTransmissionState;
 @class StratislibraryBrivoUnlockCommandResponse;
-@class StratislibraryCommand;
-@class StratislibraryCommandOutput;
-@class StratislibraryCommandResponse;
 @class StratislibraryDataTransferServiceGatt;
 @class StratislibraryEngageLockData;
 @class StratislibraryErrorStates;
@@ -35,7 +32,6 @@
 @class StratislibraryProtocolBlockData;
 @class StratislibraryStatusResponse;
 @class StratislibraryTokenResponse;
-@class StratislibraryUnlockCommandResponse;
 @protocol StratislibraryNativeLogger;
 @class StratislibraryNativeLogger;
 
@@ -193,39 +189,6 @@ any length or data has been transferred, a one-byte ACK/NAK is sent.
 @property (nonatomic) NSData* _Nullable command;
 @end
 
-@interface StratislibraryCommand : NSObject <goSeqRefInterface> {
-}
-@property(strong, readonly) _Nonnull id _ref;
-
-- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
-- (nonnull instancetype)init;
-@property (nonatomic) double seqNum;
-@property (nonatomic) BOOL prefectch;
-// skipped field Command.SvrCmds with unsupported type: []string
-
-@end
-
-@interface StratislibraryCommandOutput : NSObject <goSeqRefInterface> {
-}
-@property(strong, readonly) _Nonnull id _ref;
-
-- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
-- (nonnull instancetype)init;
-// skipped field CommandOutput.SvrCmds with unsupported type: []string
-
-@end
-
-@interface StratislibraryCommandResponse : NSObject <goSeqRefInterface> {
-}
-@property(strong, readonly) _Nonnull id _ref;
-
-- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
-- (nonnull instancetype)init;
-@property (nonatomic) int16_t status;
-// skipped field CommandResponse.Command with unsupported type: stratislibrary.Command
-
-@end
-
 /**
  * DataTransferServiceGatt is used for transferring encrypted JSON and non-JSON payloads including
 firmware files, door databases, configurations, authentication tokens, and wifi handover commands.
@@ -298,7 +261,7 @@ firmware files, door databases, configurations, authentication tokens, and wifi 
 @end
 
 /**
- * Lock is the representation of a lock we have on teh server
+ * Lock is the representation of a lock we have on the server
  */
 @interface StratislibraryLock : NSObject <goSeqRefInterface> {
 }
@@ -402,6 +365,9 @@ firmware files, door databases, configurations, authentication tokens, and wifi 
 @property (nonatomic) NSString* _Nonnull detailedMessage;
 @end
 
+/**
+ * TokenResponse is the response object for the token returned from the server
+ */
 @interface StratislibraryTokenResponse : NSObject <goSeqRefInterface> {
 }
 @property(strong, readonly) _Nonnull id _ref;
@@ -410,19 +376,7 @@ firmware files, door databases, configurations, authentication tokens, and wifi 
 - (nonnull instancetype)init;
 @property (nonatomic) int16_t status;
 @property (nonatomic) NSString* _Nonnull token;
-@end
-
-/**
- * UnlockCommandResponse is the response object that contains the command and sequence number coming from the server side
- */
-@interface StratislibraryUnlockCommandResponse : NSObject <goSeqRefInterface> {
-}
-@property(strong, readonly) _Nonnull id _ref;
-
-- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
-- (nonnull instancetype)init;
-@property (nonatomic) NSString* _Nonnull command;
-@property (nonatomic) double seqNum;
+@property (nonatomic) NSString* _Nonnull message;
 @end
 
 /**
@@ -544,7 +498,7 @@ FOUNDATION_EXPORT const int64_t StratislibraryCredentialTag;
 /**
  * Server Environments
  */
-FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryDEV;
+FOUNDATION_EXPORT const int64_t StratislibraryDEV;
 /**
  * Brivo BLE constants
  */
@@ -570,9 +524,37 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaActivateInstructionsCode;
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaActivationNotReadyCode;
 /**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaAlreadyActivatingError;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaDeviceRegistrationError;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileActivationErrorCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivatedCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivationErrorCode;
+/**
  * DormaKaba responses
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitializationNotReadyCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitiateRegistrationError;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLegicManagerStartError;
 /**
  * StatusResponse codes
  */
@@ -581,6 +563,10 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessDeniedCode;
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessGrantedCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaRegisterEventListenerError;
 /**
  * StatusResponse codes
  */
@@ -726,6 +712,10 @@ FOUNDATION_EXPORT const int64_t StratislibraryMaxPacketLen;
  */
 FOUNDATION_EXPORT const int64_t StratislibraryMaxTransferSize;
 /**
+ * MobileDeviceUUIDKey used for UUID of device when registering with dormakaba
+ */
+FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryMobileDeviceUUIDKey;
+/**
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryNetworkErrorCode;
@@ -740,7 +730,7 @@ FOUNDATION_EXPORT const int64_t StratislibraryOtherServerErrorCode;
 /**
  * Server Environments
  */
-FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryPROD;
+FOUNDATION_EXPORT const int64_t StratislibraryPROD;
 /**
  * responses used by the Go application code
  */
@@ -852,7 +842,7 @@ FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryResetSequenceAck;
 /**
  * Server Environments
  */
-FOUNDATION_EXPORT NSString* _Nonnull const StratislibrarySANDBOX;
+FOUNDATION_EXPORT const int64_t StratislibrarySANDBOX;
 /**
  * StatusResponse codes
  */
@@ -888,7 +878,7 @@ FOUNDATION_EXPORT const int64_t StratislibrarySetServerEnvironmentSuccessCode;
 /**
  * Server Environments
  */
-FOUNDATION_EXPORT NSString* _Nonnull const StratislibraryTEST;
+FOUNDATION_EXPORT const int64_t StratislibraryTEST;
 /**
  * Constants for Engage device information
  */
@@ -1079,12 +1069,12 @@ FOUNDATION_EXPORT StratislibraryPayloadTypes* _Nullable StratislibraryGetPayload
 /**
  * GetResetCommand is called when the lock's sequence number is out of sequence with the server and needs to be reset
  */
-FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetResetCommand(NSString* _Nullable lockID, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetResetCommand(NSString* _Nullable lockID, NSString* _Nullable appointmentID, NSError* _Nullable* _Nullable error);
 
 /**
  * GetServerEnvironment allows the SDK to get the server environment anywhere in the projects
  */
-FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetServerEnvironment(void);
+FOUNDATION_EXPORT long StratislibraryGetServerEnvironment(void);
 
 // skipped function GetUint32 with unsupported parameter or return types
 
@@ -1092,7 +1082,7 @@ FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetServerEnvironment(void);
 /**
  * GetUnlockCommand returns a struct with those values to be placed in a JSON string on the application side
  */
-FOUNDATION_EXPORT StratislibraryUnlockCommandResponse* _Nullable StratislibraryGetUnlockCommand(NSString* _Nullable lockID, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetUnlockCommand(NSString* _Nullable lockID, NSString* _Nullable appointmentID, NSError* _Nullable* _Nullable error);
 
 /**
  * HexStringToByteArray converts a string to a byte array. Useful for unit tests since
@@ -1135,6 +1125,8 @@ FOUNDATION_EXPORT NSString* _Nonnull StratislibraryLogSetMetadata(NSString* _Nul
  */
 FOUNDATION_EXPORT void StratislibraryLogStart(void);
 
+FOUNDATION_EXPORT NSString* _Nonnull StratislibraryNameForEnvironment(long environment);
+
 /**
  * RegisterDormaKabaDevice gives back a token from DormaKaba to register with the device
  */
@@ -1161,7 +1153,7 @@ FOUNDATION_EXPORT void StratislibrarySetNativeLogger(id<StratislibraryNativeLogg
  * SetServerEnvironment places the passed in environment from the application side in the go runtime
 To be used with calls to teh STRATIS APIs
  */
-FOUNDATION_EXPORT NSString* _Nonnull StratislibrarySetServerEnvironment(NSString* _Nullable environment);
+FOUNDATION_EXPORT void StratislibrarySetServerEnvironment(long environment);
 
 /**
  * StatusResponseForCode returns the status response for the given status response code

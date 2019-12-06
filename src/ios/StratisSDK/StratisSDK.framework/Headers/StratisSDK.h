@@ -2,8 +2,8 @@
 //  StratisSDK.h
 //  StratisSDK
 //
-//  Created by Veg on 6/5/19.
-//  Copyright © 2019 Stratis IOT. All rights reserved.
+//  Created by Michael Matranga on 10/21/19.
+//  Copyright © 2019 Stratis. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -15,3 +15,5 @@ FOUNDATION_EXPORT double StratisSDKVersionNumber;
 FOUNDATION_EXPORT const unsigned char StratisSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <StratisSDK/PublicHeader.h>
+
+
