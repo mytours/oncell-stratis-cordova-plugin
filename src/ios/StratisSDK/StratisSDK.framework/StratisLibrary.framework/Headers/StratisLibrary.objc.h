@@ -530,31 +530,15 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaAlreadyActivatingError;
 /**
  * StatusResponse codes
  */
-FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaDeviceRegistrationError;
-/**
- * StatusResponse codes
- */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileActivationErrorCode;
 /**
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivatedCode;
 /**
- * StatusResponse codes
- */
-FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivationErrorCode;
-/**
  * DormaKaba responses
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitializationNotReadyCode;
-/**
- * StatusResponse codes
- */
-FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitiateRegistrationError;
-/**
- * StatusResponse codes
- */
-FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLegicManagerStartError;
 /**
  * StatusResponse codes
  */
@@ -563,10 +547,6 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessDeniedCode;
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessGrantedCode;
-/**
- * StatusResponse codes
- */
-FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaRegisterEventListenerError;
 /**
  * StatusResponse codes
  */
