@@ -19,46 +19,29 @@ import com.stratisiot.stratissdk.StratisSDK.ResultCallback;
 public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
     private StratisSDK stratisSDK;
-    private String accessToken;
-    private String serverEnvironmentString;
 
     public OnCellStratis() {
         super();
-        this.accessToken = "";
-        this.serverEnvironmentString = "";
     }
 
-    class InitCallback implements ResultCallback {
-        public void error(JSONObject error) { Log.e(TAG, "Error on StratisSDK init:"); Log.e(TAG, error.toString()); }
-        public void result(JSONObject r) { Log.d(TAG, "StratisSDK init result:"); Log.d(TAG, r.toString()); }
-        public void done() { Log.d(TAG, "StratisSDK init done"); }
-        public void done(JSONObject r) { Log.d(TAG, "StratisSDK init done with result JSON:"); Log.d(TAG, r.toString()); }
-    }
-  
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         Log.d(TAG, "OnCellStratis plugin initialize");
         super.initialize(cordova, webView);
-        MainActivity mainActivity = (MainActivity) cordova.getActivity();
-        InitCallback initCallback = new InitCallback();
-        stratisSDK = new StratisSDK(mainActivity, initCallback);
     }
     
     private enum Commands {
-        setServerEnvironment, setAccessToken, getLocks, scanLocks, activateLock
+        initSDK, getLocks, scanLocks, activateLock
     }
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         Commands cmd = Commands.valueOf(action);
         switch (cmd) {
-            case setServerEnvironment:
+            case initSDK:
                 String serverEnvironmentString = args.getString(0);
-                this.setServerEnvironment(serverEnvironmentString, callbackContext);
-                return true;
-            case setAccessToken:
-                String accessToken = args.getString(0);
-                this.setAccessToken(accessToken, callbackContext);
+                String accessToken = args.getString(1);
+                this.initSDK(serverEnvironmentString, accessToken, callbackContext);
                 return true;
             case getLocks:
                 String property = args.getString(0);
@@ -70,7 +53,8 @@ public class OnCellStratis extends CordovaPlugin {
                 return true;
             case activateLock:
                 String lockId = args.getString(0);
-                this.activateLock(lockId, callbackContext);
+                String appointmentId = args.getString(1);
+                this.activateLock(lockId, appointmentId, callbackContext);
                 return true;
             default:
                 return false;
@@ -78,12 +62,26 @@ public class OnCellStratis extends CordovaPlugin {
     }
 
     /* Begin command functions */
-    
-    public void setServerEnvironment(String serverEnvironmentString, CallbackContext callbackContext) {
 
+    // Currently uses the deprecated method for initialization; will be simplified with new method
+    public void initSDK(String serverEnvironmentString, String accessToken, CallbackContext callbackContext) {
+
+        // Create new stratisSDK object
+        MainActivity mainActivity = (MainActivity) cordova.getActivity();
+
+        class InitCallback implements ResultCallback {
+            public void error(JSONObject error) { Log.e(TAG, "Error on StratisSDK init:"); Log.e(TAG, error.toString()); }
+            public void result(JSONObject r) { Log.d(TAG, "StratisSDK init result:"); Log.d(TAG, r.toString()); }
+            public void done() { Log.d(TAG, "StratisSDK init done"); }
+            public void done(JSONObject r) { Log.d(TAG, "StratisSDK init done with result JSON:"); Log.d(TAG, r.toString()); }
+        }
+        InitCallback initCallback = new InitCallback();
+
+        stratisSDK = new StratisSDK(mainActivity, initCallback);
+
+        // Set server environment
         if (isValidServerEnvironment(serverEnvironmentString)) {
             Log.d(TAG, "setServerEnvironment " + serverEnvironmentString);
-            this.serverEnvironmentString = serverEnvironmentString;
 
             class ServerEnvironmentCallback implements ResultCallback {
                 public void error(JSONObject error) { Log.e(TAG, "Error on setServerEnvironment:"); Log.e(TAG, error.toString()); }
@@ -91,27 +89,17 @@ public class OnCellStratis extends CordovaPlugin {
                 public void done() { Log.d(TAG, "setServerEnvironment done"); }
                 public void done(JSONObject r) { Log.d(TAG, "setServerEnvironment done with result JSON"); Log.d(TAG, r.toString()); }
             }
-
             ServerEnvironmentCallback serverEnvironmentCallback = new ServerEnvironmentCallback();
+
             stratisSDK.setServerEnvironment(StratisSDK.ServerEnvironment.valueOf(serverEnvironmentString), serverEnvironmentCallback);
 
-            JSONObject r = new JSONObject();
-            try {
-                r.put("success", 1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callbackContext.success(r.toString());
         } else {
             callbackContext.error("Expected a valid server environment");
         }
-    }
 
-    public void setAccessToken(String accessToken, CallbackContext callbackContext) {
-
+        // Set access token
         if (accessToken != null && accessToken.length() > 0) {
             Log.d(TAG, "setAccessToken " + accessToken);
-            this.accessToken = accessToken;
 
             class AccessTokenCallback implements ResultCallback {
                 public void error(JSONObject error) { Log.e(TAG, "Error on setAccessToken:"); Log.e(TAG, error.toString()); }
@@ -119,31 +107,41 @@ public class OnCellStratis extends CordovaPlugin {
                 public void done() { Log.d(TAG, "setAccessToken done"); }
                 public void done(JSONObject r) { Log.d(TAG, "setAccessToken done with result JSON"); Log.d(TAG, r.toString()); }
             }
-
             AccessTokenCallback accessTokenCallback = new AccessTokenCallback();
-            stratisSDK.setAccessToken(accessToken, accessTokenCallback);
 
-            JSONObject r = new JSONObject();
-            try {
-                r.put("success", 1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callbackContext.success(r.toString());
+            stratisSDK.setAccessToken(accessToken, accessTokenCallback);
         } else {
             callbackContext.error("Expected an access token");
         }
+
+        // Return successfully
+        JSONObject r = new JSONObject();
+        try {
+            r.put("success", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        callbackContext.success(r.toString());
+
     }
     
     public void getLocks(String property, CallbackContext callbackContext) {
 
         if (property != null && property.length() > 0) {
 
-            this._getLocks(property);
+            class GetLocksCallback implements ResultCallback {
+                public void error(JSONObject error) { Log.e(TAG, "Error on getLocks:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
+                public void result(JSONObject r) { Log.d(TAG, "getLocks result: "); Log.d(TAG, r.toString()); } // TODO save locks returned
+                public void done() { Log.d(TAG, "getLocks done"); } // TODO return response in callback here
+                public void done(JSONObject r) { Log.d(TAG, "getLocks done with result JSON"); Log.d(TAG, r.toString()); }
+            }
+            GetLocksCallback getLocksCallback = new GetLocksCallback();
+
+            stratisSDK.getLocks(property, getLocksCallback);
 
             JSONObject r = new JSONObject();
             try {
-                r.put("success", 1);
+                r.put("success", 1); // TODO include locks in callback json
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -156,11 +154,19 @@ public class OnCellStratis extends CordovaPlugin {
     public void scanLocks(Long seconds, CallbackContext callbackContext) {
         if (seconds > 0) {
 
-            this._scanLocks(seconds);
+            class ScanLocksCallback implements ResultCallback {
+                public void error(JSONObject error) { Log.e(TAG, "Error on scanLocks:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
+                public void result(JSONObject r) { Log.d(TAG, "scanLocks result: "); Log.d(TAG, r.toString()); } // TODO save locks returned
+                public void done() { Log.d(TAG, "scanLocks done"); } // TODO return response in callback here
+                public void done(JSONObject r) { Log.d(TAG, "scanLocks done with result JSON"); Log.d(TAG, r.toString()); }
+            }
+            ScanLocksCallback scanLocksCallback = new ScanLocksCallback();
+
+            stratisSDK.scanLocks(seconds, scanLocksCallback);
 
             JSONObject r = new JSONObject();
             try {
-                r.put("success", 1);
+                r.put("success", 1); // TODO include locks in callback json
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -170,10 +176,18 @@ public class OnCellStratis extends CordovaPlugin {
         }
     }
     
-    public void activateLock(String lockId, CallbackContext callbackContext) {
-        if (lockId != null && lockId.length() > 0) {
+    public void activateLock(String lockId, String appointmentId, CallbackContext callbackContext) {
+        if (lockId != null && lockId.length() > 0 && appointmentId != null && appointmentId.length() > 0) {
 
-            this._activateLock(lockId);
+            class ActivateLockCallback implements ResultCallback {
+                public void error(JSONObject error) { Log.e(TAG, "Error on activateLock:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
+                public void result(JSONObject r) { Log.d(TAG, "activateLock result: "); Log.d(TAG, r.toString()); } // TODO return response in callback here if ACTIVATION_SUCCESS
+                public void done() { Log.d(TAG, "activateLock done"); }
+                public void done(JSONObject r) { Log.d(TAG, "activateLock done with result JSON"); Log.d(TAG, r.toString()); }
+            }
+            ActivateLockCallback activateLockCallback = new ActivateLockCallback();
+
+            stratisSDK.activateLock(lockId, appointmentId, activateLockCallback);
 
             JSONObject r = new JSONObject();
             try {
@@ -183,50 +197,8 @@ public class OnCellStratis extends CordovaPlugin {
             }
             callbackContext.success(r.toString());
         } else {
-            callbackContext.error("Expected a lock ID");
+            callbackContext.error("Expected a lock ID and appointment ID");
         }
-    }
-    
-    public void _getLocks(String property) {
-        Log.d(TAG, "_getLocks " + property);
-
-        class GetLocksCallback implements ResultCallback {
-            public void error(JSONObject error) { Log.e(TAG, "Error on getLocks:"); Log.e(TAG, error.toString()); }
-            public void result(JSONObject r) { Log.d(TAG, "getLocks result: "); Log.d(TAG, r.toString()); }
-            public void done() { Log.d(TAG, "getLocks done"); }
-            public void done(JSONObject r) { Log.d(TAG, "getLocks done with result JSON"); Log.d(TAG, r.toString()); }
-        }
-
-        GetLocksCallback getLocksCallback = new GetLocksCallback();
-        stratisSDK.getLocks(property, getLocksCallback);
-    }
-    
-    public void _scanLocks(Long seconds) {
-        Log.d(TAG, "_scanLocks: " + seconds);
-
-        class ScanLocksCallback implements ResultCallback {
-            public void error(JSONObject error) { Log.e(TAG, "Error on scanLocks:"); Log.e(TAG, error.toString()); }
-            public void result(JSONObject r) { Log.d(TAG, "scanLocks result: "); Log.d(TAG, r.toString()); }
-            public void done() { Log.d(TAG, "scanLocks done"); }
-            public void done(JSONObject r) { Log.d(TAG, "scanLocks done with result JSON"); Log.d(TAG, r.toString()); }
-        }
-
-        ScanLocksCallback scanLocksCallback = new ScanLocksCallback();
-        stratisSDK.scanLocks(seconds, scanLocksCallback);
-    }
-    
-    public void _activateLock(String lockId) {
-        Log.d(TAG, "_activateLock " + lockId);
-
-        class ActivateLockCallback implements ResultCallback {
-            public void error(JSONObject error) { Log.e(TAG, "Error on activateLock:"); Log.e(TAG, error.toString()); }
-            public void result(JSONObject r) { Log.d(TAG, "activateLock result: "); Log.d(TAG, r.toString()); }
-            public void done() { Log.d(TAG, "activateLock done"); }
-            public void done(JSONObject r) { Log.d(TAG, "activateLock done with result JSON"); Log.d(TAG, r.toString()); }
-        }
-
-        ActivateLockCallback activateLockCallback = new ActivateLockCallback();
-        stratisSDK.activateLock(lockId, activateLockCallback);
     }
 
     /* End command functions */
@@ -244,8 +216,6 @@ public class OnCellStratis extends CordovaPlugin {
             return false;
         }
     }
-
-    // NOTE do we need functions to get and set status of bluetooth?
 
     /* End utility functions*/
 
