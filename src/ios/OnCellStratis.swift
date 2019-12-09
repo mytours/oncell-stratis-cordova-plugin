@@ -5,10 +5,6 @@ import StratisSDK
     var stratisSdk: StratisSDK!
     var locks = [Lock]()
     
-    @objc(pluginInitialize)
-    override func pluginInitialize() {
-    }
-    
     @objc(initSDK:)
     func initSDK(command: CDVInvokedUrlCommand) {
         let serverEnvironmentString = command.arguments[0] as? String ?? ""
