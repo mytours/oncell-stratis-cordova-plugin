@@ -94,7 +94,7 @@ public class OnCellStratis extends CordovaPlugin {
             stratisSDK.setServerEnvironment(StratisSDK.ServerEnvironment.valueOf(serverEnvironmentString), serverEnvironmentCallback);
 
         } else {
-            callbackContext.error("Expected a valid server environment");
+            callbackError(callbackContext,"Expected a valid server environment");
         }
 
         // Set access token
@@ -111,7 +111,7 @@ public class OnCellStratis extends CordovaPlugin {
 
             stratisSDK.setAccessToken(accessToken, accessTokenCallback);
         } else {
-            callbackContext.error("Expected an access token");
+            callbackError(callbackContext, "Expected an access token");
         }
 
         // Return successfully
@@ -122,68 +122,101 @@ public class OnCellStratis extends CordovaPlugin {
             e.printStackTrace();
         }
         callbackContext.success(r.toString());
-
     }
-    
+
+
     public void getLocks(String property, CallbackContext callbackContext) {
 
         if (property != null && property.length() > 0) {
 
             class GetLocksCallback implements ResultCallback {
-                public void error(JSONObject error) { Log.e(TAG, "Error on getLocks:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
-                public void result(JSONObject r) { Log.d(TAG, "getLocks result: "); Log.d(TAG, r.toString()); } // TODO save locks returned
-                public void done() { Log.d(TAG, "getLocks done"); } // TODO return response in callback here
-                public void done(JSONObject r) { Log.d(TAG, "getLocks done with result JSON"); Log.d(TAG, r.toString()); }
+                public void error(JSONObject error) {
+                    Log.e(TAG, "Error on getLocks:");
+                    Log.e(TAG, error.toString());
+                    callbackError(callbackContext, error.toString());
+                }
+                public void result(JSONObject r) {
+                    Log.d(TAG, "getLocks result: ");
+                    Log.d(TAG, r.toString());
+                    // TODO save locks returned
+                }
+                public void done() {
+                    Log.d(TAG, "getLocks done");
+                    // TODO include locks in callback json
+                    callbackSuccess(callbackContext, null);
+                }
+                public void done(JSONObject r) {
+                    Log.d(TAG, "getLocks done with result JSON");
+                    Log.d(TAG, r.toString());
+                    // TODO include locks in callback json
+                    callbackSuccess(callbackContext, null);
+                }
             }
             GetLocksCallback getLocksCallback = new GetLocksCallback();
 
             stratisSDK.getLocks(property, getLocksCallback);
-
-            JSONObject r = new JSONObject();
-            try {
-                r.put("success", 1); // TODO include locks in callback json
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callbackContext.success(r.toString());
         } else {
-            callbackContext.error("Expected a property");
+            callbackError(callbackContext, "Expected a property ID");
         }
     }
-    
+
+
     public void scanLocks(Long seconds, CallbackContext callbackContext) {
         if (seconds > 0) {
 
             class ScanLocksCallback implements ResultCallback {
-                public void error(JSONObject error) { Log.e(TAG, "Error on scanLocks:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
-                public void result(JSONObject r) { Log.d(TAG, "scanLocks result: "); Log.d(TAG, r.toString()); } // TODO save locks returned
-                public void done() { Log.d(TAG, "scanLocks done"); } // TODO return response in callback here
-                public void done(JSONObject r) { Log.d(TAG, "scanLocks done with result JSON"); Log.d(TAG, r.toString()); }
+                public void error(JSONObject error) {
+                    Log.e(TAG, "Error on scanLocks:");
+                    Log.e(TAG, error.toString());
+                    callbackError(callbackContext, error.toString());
+                }
+                public void result(JSONObject r) {
+                    Log.d(TAG, "scanLocks result: ");
+                    Log.d(TAG, r.toString());
+                    // TODO save locks returned
+                }
+                public void done() {
+                    Log.d(TAG, "scanLocks done");
+                    // TODO include locks in callback json
+                    callbackSuccess(callbackContext, null);
+                }
+                public void done(JSONObject r) {
+                    Log.d(TAG, "scanLocks done with result JSON");
+                    Log.d(TAG, r.toString());
+                    // TODO include locks in callback json
+                    callbackSuccess(callbackContext, null);
+                }
             }
             ScanLocksCallback scanLocksCallback = new ScanLocksCallback();
 
             stratisSDK.scanLocks(seconds, scanLocksCallback);
-
-            JSONObject r = new JSONObject();
-            try {
-                r.put("success", 1); // TODO include locks in callback json
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callbackContext.success(r.toString());
         } else {
-            callbackContext.error("Expected seconds to scan");
+            callbackError(callbackContext, "Expected seconds to scan");
         }
     }
-    
+
+
     public void activateLock(String lockId, String appointmentId, CallbackContext callbackContext) {
         if (lockId != null && lockId.length() > 0 && appointmentId != null && appointmentId.length() > 0) {
 
             class ActivateLockCallback implements ResultCallback {
-                public void error(JSONObject error) { Log.e(TAG, "Error on activateLock:"); Log.e(TAG, error.toString()); } // TODO return error in callback here
-                public void result(JSONObject r) { Log.d(TAG, "activateLock result: "); Log.d(TAG, r.toString()); } // TODO return response in callback here if ACTIVATION_SUCCESS
-                public void done() { Log.d(TAG, "activateLock done"); }
-                public void done(JSONObject r) { Log.d(TAG, "activateLock done with result JSON"); Log.d(TAG, r.toString()); }
+                public void error(JSONObject error) {
+                    Log.e(TAG, "Error on activateLock:");
+                    Log.e(TAG, error.toString());
+                    callbackError(callbackContext, error.toString());
+                }
+                public void result(JSONObject r) {
+                    Log.d(TAG, "activateLock result: ");
+                    Log.d(TAG, r.toString());
+                    // TODO return response in callback here if ACTIVATION_SUCCESS
+                }
+                public void done() {
+                    Log.d(TAG, "activateLock done");
+                }
+                public void done(JSONObject r) {
+                    Log.d(TAG, "activateLock done with result JSON");
+                    Log.d(TAG, r.toString());
+                }
             }
             ActivateLockCallback activateLockCallback = new ActivateLockCallback();
 
@@ -215,6 +248,32 @@ public class OnCellStratis extends CordovaPlugin {
         } catch (IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public void callbackSuccess(CallbackContext callbackContext, String message) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("success", 1);
+            if (message != null && message.length() > 0) {
+                r.put("message", message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        callbackContext.success(r.toString());
+    }
+
+    public void callbackError(CallbackContext callbackContext, String message) {
+        JSONObject r = new JSONObject();
+        try {
+            r.put("success", 0);
+            if (message != null && message.length() > 0) {
+                r.put("error", message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        callbackContext.error(r.toString());
     }
 
     /* End utility functions*/
