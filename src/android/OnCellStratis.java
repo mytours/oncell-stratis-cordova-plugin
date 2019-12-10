@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 import android.util.Log;
 
 import com.stratisiot.stratissdk.StratisSDK;
@@ -19,6 +21,7 @@ import com.stratisiot.stratissdk.StratisSDK.ResultCallback;
 public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
     private StratisSDK stratisSDK;
+    private ArrayList<JSONObject> locks = new ArrayList<JSONObject>();
 
     public OnCellStratis() {
         super();
@@ -138,18 +141,22 @@ public class OnCellStratis extends CordovaPlugin {
                 public void result(JSONObject r) {
                     Log.d(TAG, "getLocks result: ");
                     Log.d(TAG, r.toString());
-                    // TODO save locks returned
+                    try {
+                        addLocks((JSONArray) r.get("locks"));
+                    } catch (JSONException e) {
+                        Log.d(TAG, e.toString());
+                    }
                 }
                 public void done() {
                     Log.d(TAG, "getLocks done");
-                    // TODO include locks in callback json
-                    callbackSuccess(callbackContext, null);
+                    JSONArray locksJSON = new JSONArray(locks);
+                    callbackSuccess(callbackContext, locksJSON.toString());
                 }
                 public void done(JSONObject r) {
                     Log.d(TAG, "getLocks done with result JSON");
                     Log.d(TAG, r.toString());
-                    // TODO include locks in callback json
-                    callbackSuccess(callbackContext, null);
+                    JSONArray locksJSON = new JSONArray(locks);
+                    callbackSuccess(callbackContext, locksJSON.toString());
                 }
             }
             GetLocksCallback getLocksCallback = new GetLocksCallback();
@@ -173,18 +180,22 @@ public class OnCellStratis extends CordovaPlugin {
                 public void result(JSONObject r) {
                     Log.d(TAG, "scanLocks result: ");
                     Log.d(TAG, r.toString());
-                    // TODO save locks returned
+                    try {
+                        enableLock((JSONObject) r.get("lock"));
+                    } catch (JSONException e) {
+                        Log.d(TAG, e.toString());
+                    }
                 }
                 public void done() {
                     Log.d(TAG, "scanLocks done");
-                    // TODO include locks in callback json
-                    callbackSuccess(callbackContext, null);
+                    JSONArray locksJSON = new JSONArray(locks);
+                    callbackSuccess(callbackContext, locksJSON.toString());
                 }
                 public void done(JSONObject r) {
                     Log.d(TAG, "scanLocks done with result JSON");
                     Log.d(TAG, r.toString());
-                    // TODO include locks in callback json
-                    callbackSuccess(callbackContext, null);
+                    JSONArray locksJSON = new JSONArray(locks);
+                    callbackSuccess(callbackContext, locksJSON.toString());
                 }
             }
             ScanLocksCallback scanLocksCallback = new ScanLocksCallback();
@@ -208,7 +219,14 @@ public class OnCellStratis extends CordovaPlugin {
                 public void result(JSONObject r) {
                     Log.d(TAG, "activateLock result: ");
                     Log.d(TAG, r.toString());
-                    // TODO return response in callback here if ACTIVATION_SUCCESS
+                    try {
+                        String message = r.get("message").toString();
+                        if (message.equals("ACTIVATION_SUCCESS")) {
+                            callbackSuccess(callbackContext, null);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 public void done() {
                     Log.d(TAG, "activateLock done");
@@ -221,14 +239,6 @@ public class OnCellStratis extends CordovaPlugin {
             ActivateLockCallback activateLockCallback = new ActivateLockCallback();
 
             stratisSDK.activateLock(lockId, appointmentId, activateLockCallback);
-
-            JSONObject r = new JSONObject();
-            try {
-                r.put("success", 1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            callbackContext.success(r.toString());
         } else {
             callbackContext.error("Expected a lock ID and appointment ID");
         }
@@ -238,7 +248,49 @@ public class OnCellStratis extends CordovaPlugin {
 
     /* Begin utility functions */
 
-    public boolean isValidServerEnvironment(String serverEnvironmentString) {
+    private void addLocks(JSONArray locksJSON) {
+        Log.d(TAG, "addLocks: " + locksJSON.toString());
+        if (locksJSON != null) {
+            locks.clear();
+            for (int i=0;i<locksJSON.length();i++){
+                try {
+                    JSONObject lock = locksJSON.getJSONObject(i);
+                    // rename some fields from the response to match iOS
+                    lock.put("lockId", lock.get("id"));
+                    lock.remove("id");
+                    lock.put("unlockTechnology", lock.get("unlock_technology"));
+                    lock.remove("unlock_technology");
+                    lock.put("rssi", 0);
+                    lock.put("isEnabled", false);
+                    locks.add(lock);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void enableLock(JSONObject scannedLock) {
+        Log.d(TAG, "enableLock: " + scannedLock.toString());
+        if (scannedLock != null) {
+            try {
+                String scannedLockId = scannedLock.getString("id");
+                for (int i = 0; i < locks.size(); i++) {
+                    JSONObject lock = locks.get(i);
+                    String lockId = lock.getString("lockId");
+                    if (scannedLockId.equals(lockId)) {
+                        lock.put("isEnabled", true);
+                        lock.put("rssi", scannedLock.get("rssi"));
+                    }
+                    locks.set(i, lock);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean isValidServerEnvironment(String serverEnvironmentString) {
         // Valid serverEnvironmentStrings:
         // DEV, SANDBOX, TEST, PROD
         // see https://developer.stratisiot.com/sdk/android/com.stratisiot.stratissdk/-server-environment/ for more info
@@ -250,7 +302,7 @@ public class OnCellStratis extends CordovaPlugin {
         }
     }
 
-    public void callbackSuccess(CallbackContext callbackContext, String message) {
+    private void callbackSuccess(CallbackContext callbackContext, String message) {
         JSONObject r = new JSONObject();
         try {
             r.put("success", 1);
@@ -263,7 +315,7 @@ public class OnCellStratis extends CordovaPlugin {
         callbackContext.success(r.toString());
     }
 
-    public void callbackError(CallbackContext callbackContext, String message) {
+    private void callbackError(CallbackContext callbackContext, String message) {
         JSONObject r = new JSONObject();
         try {
             r.put("success", 0);
