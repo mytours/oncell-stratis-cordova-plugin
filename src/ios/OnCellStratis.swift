@@ -149,9 +149,11 @@ import StratisSDK
     @objc(getLocksAsJson)
     func getLocksAsJson() -> String {
         var jsonString = "[]"
-        let encoder = JSONEncoder()
-        if let jsonData = try? encoder.encode(self.locks) {
-            jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+        if (!self.locks.isEmpty) {
+            let encoder = JSONEncoder()
+            if let jsonData = try? encoder.encode(self.locks) {
+                jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+            }
         }
         return jsonString
     }
