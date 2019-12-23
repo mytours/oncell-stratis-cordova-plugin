@@ -4,6 +4,7 @@ import StratisSDK
     
     var stratisSdk: StratisSDK!
     var locks = [Lock]()
+    var getLocksError = false;
     
     @objc(initSDK:)
     func initSDK(command: CDVInvokedUrlCommand) {
@@ -39,6 +40,7 @@ import StratisSDK
     func getLocks(command: CDVInvokedUrlCommand) {
         
         let propertyId = command.arguments[0] as? String ?? ""
+        self.getLocksError = false;
         
         let callback = StratisSDKCallback(
             resultCallback: { (res) in
@@ -55,6 +57,7 @@ import StratisSDK
                     self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
             },
                 errorCallback: { (err) in
+                    self.getLocksError = true;
                     var message = "{\"success\": \"error\": \"Unable to get locks\"}"
                     if let errorMessage = err["message"] as? String {
                         message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
@@ -149,10 +152,12 @@ import StratisSDK
     @objc(getLocksAsJson)
     func getLocksAsJson() -> String {
         var jsonString = "[]"
-        if (!self.locks.isEmpty) {
-            let encoder = JSONEncoder()
-            if let jsonData = try? encoder.encode(self.locks) {
-                jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+        if (!self.getLocksError) {
+            if (!self.locks.isEmpty) {
+                let encoder = JSONEncoder()
+                if let jsonData = try? encoder.encode(self.locks) {
+                    jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+                }
             }
         }
         return jsonString
@@ -178,30 +183,24 @@ class StratisSDKCallback: ResultCallback {
     }
     
     func result(res: [String: Any]) {
-        DispatchQueue.main.async {
-            NSLog("Result callback called with: \(res)")
-            if let message = res["message"] as? String {
-                self.messageCallback?(message)
-            }
-            self.resultCallback?(res)
+        NSLog("Result callback called with: \(res)")
+        if let message = res["message"] as? String {
+            self.messageCallback?(message)
         }
+        self.resultCallback?(res)
     }
     
     func done(done: [String: Any]) {
-        DispatchQueue.main.async {
-            NSLog("Done callback called with: \(done)")
-            self.doneCallback?(done)
-        }
+        NSLog("Done callback called with: \(done)")
+        self.doneCallback?(done)
     }
     
     func error(err: [String: Any]) {
-        DispatchQueue.main.async {
-            NSLog("Error callback called with: \(err)")
-            if let message = err["message"] as? String {
-                self.messageCallback?(message)
-            }
-            self.errorCallback?(err)
+        NSLog("Error callback called with: \(err)")
+        if let message = err["message"] as? String {
+            self.messageCallback?(message)
         }
+        self.errorCallback?(err)
     }
 }
 
