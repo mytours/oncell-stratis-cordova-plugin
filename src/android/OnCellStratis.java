@@ -14,6 +14,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import android.util.Log;
+import android.os.Handler;
+import java.lang.Runnable;
 
 import com.stratisiot.stratissdk.StratisSDK;
 import com.stratisiot.stratissdk.StratisSDK.ResultCallback;
@@ -102,6 +104,7 @@ public class OnCellStratis extends CordovaPlugin {
 
         } else {
             callbackError(callbackContext,"Expected a valid server environment");
+            bugsnagNotify("Expected a valid server environment");
         }
 
         // Set access token
@@ -119,6 +122,7 @@ public class OnCellStratis extends CordovaPlugin {
             stratisSDK.setAccessToken(accessToken, accessTokenCallback);
         } else {
             callbackError(callbackContext, "Expected an access token");
+            bugsnagNotify("Expected an access token");
         }
 
         // Return successfully
@@ -171,6 +175,7 @@ public class OnCellStratis extends CordovaPlugin {
             stratisSDK.getLocks(property, getLocksCallback);
         } else {
             callbackError(callbackContext, "Expected a property ID");
+            bugsnagNotify("Expected a property ID");
         }
     }
 
@@ -218,6 +223,7 @@ public class OnCellStratis extends CordovaPlugin {
             stratisSDK.scanLocks(seconds, scanLocksCallback);
         } else {
             callbackError(callbackContext, "Expected seconds to scan");
+            bugsnagNotify("Expected seconds to scan");
         }
     }
 
@@ -228,10 +234,16 @@ public class OnCellStratis extends CordovaPlugin {
             Bugsnag.leaveBreadcrumb("appointmentId: " + appointmentId);
 
             class ActivateLockCallback implements ResultCallback {
+                public boolean responseSent;
+                public ActivateLockCallback() {
+                    super();
+                    responseSent = false;
+                }
                 public void error(JSONObject error) {
                     Log.e(TAG, "Error on activateLock: " + error.toString());
                     bugsnagNotify(error.toString());
                     callbackError(callbackContext, error.toString());
+                    responseSent = true;
                 }
                 public void result(JSONObject r) {
                     Log.d(TAG, "activateLock result: " + r.toString());
@@ -240,6 +252,7 @@ public class OnCellStratis extends CordovaPlugin {
                         String message = r.get("message").toString();
                         if (message.equals("ACTIVATION_SUCCESS")) {
                             callbackSuccess(callbackContext, null);
+                            responseSent = true;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -255,8 +268,24 @@ public class OnCellStratis extends CordovaPlugin {
             ActivateLockCallback activateLockCallback = new ActivateLockCallback();
 
             stratisSDK.activateLock(lockId, appointmentId, activateLockCallback);
+
+            // if we haven't sent a response to the front-end after 15 seconds, return error and log to Bugsnag
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "activateLock responseSent: " + activateLockCallback.responseSent);
+                    if (!activateLockCallback.responseSent) {
+                        bugsnagNotify("Lock activation took too long to complete");
+                        callbackError(callbackContext,"Lock activation took too long to complete");
+                    }
+                }
+            };
+            Handler handler = new Handler();
+            handler.postDelayed(runnable, 15*1000);
+
         } else {
             callbackContext.error("Expected a lock ID and appointment ID");
+            bugsnagNotify("Expected a lock ID and appointment ID");
         }
     }
 
