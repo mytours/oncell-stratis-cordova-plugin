@@ -133,6 +133,7 @@ import Bugsnag
         var responseSent = false
         
         Bugsnag.leaveBreadcrumb(withMessage: "lockId: \(lockId)")
+        // appointmentId is no longer necessary for the Stratis SDK, but I'm leaving it here for debugging purposes
         Bugsnag.leaveBreadcrumb(withMessage: "appointmentId: \(appointmentId)")
         
         let callback = StratisSDKCallback(
@@ -168,10 +169,10 @@ import Bugsnag
             }
         )
         
-        stratisSdk.activateLock(lockId: lockId, appointmentId: appointmentId, callback: callback)
+        stratisSdk.activateLock(lockId: lockId, callback: callback)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            if (!responseSent) { // If we haven't responded to the frontend by the timeout (10s)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+            if (!responseSent) { // If we haven't responded to the frontend by the timeout (20s)
                 let message = "{\"success\": 0, \"error\": \"Lock activation took to long to complete\"}"
                 self.bugsnagNotify(exceptionName: "activateLockTimeout", exceptionReason: message)
                 let pluginResult = CDVPluginResult(

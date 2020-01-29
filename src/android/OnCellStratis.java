@@ -231,6 +231,7 @@ public class OnCellStratis extends CordovaPlugin {
     public void activateLock(String lockId, String appointmentId, CallbackContext callbackContext) {
         if (lockId != null && lockId.length() > 0 && appointmentId != null && appointmentId.length() > 0) {
             Bugsnag.leaveBreadcrumb("lockId: " + lockId);
+            // appointmentId is no longer necessary for the Stratis SDK, but I'm leaving it here for debugging purposes
             Bugsnag.leaveBreadcrumb("appointmentId: " + appointmentId);
 
             class ActivateLockCallback implements ResultCallback {
@@ -267,9 +268,9 @@ public class OnCellStratis extends CordovaPlugin {
             }
             ActivateLockCallback activateLockCallback = new ActivateLockCallback();
 
-            stratisSDK.activateLock(lockId, appointmentId, activateLockCallback);
+            stratisSDK.activateLock(lockId, activateLockCallback);
 
-            // if we haven't sent a response to the front-end after 15 seconds, return error and log to Bugsnag
+            // if we haven't sent a response to the front-end after 20 seconds, return error and log to Bugsnag
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -281,7 +282,7 @@ public class OnCellStratis extends CordovaPlugin {
                 }
             };
             Handler handler = new Handler();
-            handler.postDelayed(runnable, 15*1000);
+            handler.postDelayed(runnable, 20*1000);
 
         } else {
             callbackContext.error("Expected a lock ID and appointment ID");
