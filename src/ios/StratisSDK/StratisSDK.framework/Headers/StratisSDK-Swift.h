@@ -226,9 +226,6 @@ typedef SWIFT_ENUM(NSInteger, ServerEnvironment, closed) {
 };
 
 
-/// Base SDK class for interacting with locks.
-/// author:
-/// STRATIS IoT, LLC.
 SWIFT_CLASS("_TtC10StratisSDK10StratisSDK")
 @interface StratisSDK : NSObject
 /// Instantiates the SDK for calling internal methods
@@ -518,9 +515,6 @@ typedef SWIFT_ENUM(NSInteger, ServerEnvironment, closed) {
 };
 
 
-/// Base SDK class for interacting with locks.
-/// author:
-/// STRATIS IoT, LLC.
 SWIFT_CLASS("_TtC10StratisSDK10StratisSDK")
 @interface StratisSDK : NSObject
 /// Instantiates the SDK for calling internal methods

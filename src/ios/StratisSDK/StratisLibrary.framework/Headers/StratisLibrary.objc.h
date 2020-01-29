@@ -306,7 +306,8 @@ firmware files, door databases, configurations, authentication tokens, and wifi 
 @property (nonatomic) long noOperation;
 @property (nonatomic) long authenticating;
 @property (nonatomic) long dataTransfer;
-@property (nonatomic) long serverCommandSent;
+@property (nonatomic) long unlockCommandSent;
+@property (nonatomic) long resetCommandSent;
 @property (nonatomic) long readingConfig;
 @property (nonatomic) long readingAudits;
 @end
@@ -530,15 +531,31 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaAlreadyActivatingError;
 /**
  * StatusResponse codes
  */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaDeviceRegistrationError;
+/**
+ * StatusResponse codes
+ */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileActivationErrorCode;
 /**
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivatedCode;
 /**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaFileDeactivationErrorCode;
+/**
  * DormaKaba responses
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitializationNotReadyCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaInitiateRegistrationError;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLegicManagerStartError;
 /**
  * StatusResponse codes
  */
@@ -547,6 +564,14 @@ FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessDeniedCode;
  * StatusResponse codes
  */
 FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockAccessGrantedCode;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaLockResponseError;
+/**
+ * StatusResponse codes
+ */
+FOUNDATION_EXPORT const int64_t StratislibraryDormaKabaRegisterEventListenerError;
 /**
  * StatusResponse codes
  */
@@ -977,7 +1002,7 @@ FOUNDATION_EXPORT StratislibraryAuthenticationStates* _Nullable StratislibraryGe
 /**
  * GetBrivoBLEUnlockCommand called from Native. Gets unlock command and returns unlock byte stream
  */
-FOUNDATION_EXPORT StratislibraryBrivoUnlockCommandResponse* _Nullable StratislibraryGetBrivoBLEUnlockCommand(long brivoDoorID, NSError* _Nullable* _Nullable error);
+FOUNDATION_EXPORT StratislibraryBrivoUnlockCommandResponse* _Nullable StratislibraryGetBrivoBLEUnlockCommand(long brivoDoorID, NSString* _Nullable cachedBleUserCred, NSString* _Nullable cachedBrivoUserID, NSError* _Nullable* _Nullable error);
 
 /**
  * GetBrivoDataTransferNotification gives an object with the Data Transfer Notification constants
@@ -1045,6 +1070,12 @@ FOUNDATION_EXPORT StratislibraryOperationStates* _Nullable StratislibraryGetOper
  * GetPayloadTypes gives an object with the Payload Type constants
  */
 FOUNDATION_EXPORT StratislibraryPayloadTypes* _Nullable StratislibraryGetPayloadTypes(void);
+
+/**
+ * GetPropertyID allows the SDK to get the property ID anywhere in the project
+Needed for Brivo users to store Brivo creds for mulitple properties
+ */
+FOUNDATION_EXPORT NSString* _Nonnull StratislibraryGetPropertyID(void);
 
 /**
  * GetResetCommand is called when the lock's sequence number is out of sequence with the server and needs to be reset
@@ -1130,8 +1161,13 @@ FOUNDATION_EXPORT NSString* _Nonnull StratislibrarySetAccessToken(NSString* _Nul
 FOUNDATION_EXPORT void StratislibrarySetNativeLogger(id<StratislibraryNativeLogger> _Nullable nl);
 
 /**
+ * SetPropertyID places the passed in property ID from the application side in the go runtime
+ */
+FOUNDATION_EXPORT void StratislibrarySetPropertyID(NSString* _Nullable property);
+
+/**
  * SetServerEnvironment places the passed in environment from the application side in the go runtime
-To be used with calls to teh STRATIS APIs
+To be used with calls to the STRATIS APIs
  */
 FOUNDATION_EXPORT void StratislibrarySetServerEnvironment(long environment);
 
