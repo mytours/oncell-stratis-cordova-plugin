@@ -7,26 +7,46 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.apache.cordova.PluginResult.Status;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+
+import java.lang.Runnable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import android.util.Log;
+import android.content.Context;
 import android.os.Handler;
-import java.lang.Runnable;
 
 import com.stratisiot.stratissdk.StratisSDK;
-import com.stratisiot.stratissdk.StratisSDK.ResultCallback;
+import com.stratisiot.stratissdk.constants.ServerEnvironment;
+import com.stratisiot.stratissdk.model.Configuration;
+import com.stratisiot.stratissdk.error.StratisError;
+import com.stratisiot.stratissdk.listener.DeviceActivationEvent;
+import com.stratisiot.stratissdk.listener.StratisDeviceAccessListener;
+import com.stratisiot.stratissdk.listener.StratisDeviceActivationListener;
+import com.stratisiot.stratissdk.listener.StratisDeviceDiscoveryListener;
+import com.stratisiot.stratissdk.model.lock.StratisLock;
 
 import com.bugsnag.android.*;
-import com.bugsnag.android.Error;
 
 public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
     private StratisSDK stratisSDK;
-    private ArrayList<JSONObject> locks = new ArrayList<JSONObject>();
+    private Collection<StratisLock> accessibleLocks;
+    private List<StratisLock> discoveredLocks;
 
     public OnCellStratis() {
         super();
@@ -49,15 +69,14 @@ public class OnCellStratis extends CordovaPlugin {
             case initSDK:
                 String serverEnvironmentString = args.getString(0);
                 String accessToken = args.getString(1);
-                this.initSDK(serverEnvironmentString, accessToken, callbackContext);
+                String propertyId = args.getString(2);
+                this.initSDK(serverEnvironmentString, accessToken, propertyId, callbackContext);
                 return true;
             case getLocks:
-                String property = args.getString(0);
-                this.getLocks(property, callbackContext);
+                this.getLocks(callbackContext);
                 return true;
             case scanLocks:
-                Long seconds = args.getLong(0);
-                this.scanLocks(seconds, callbackContext);
+                this.scanLocks(callbackContext);
                 return true;
             case activateLock:
                 String lockId = args.getString(0);
@@ -71,222 +90,197 @@ public class OnCellStratis extends CordovaPlugin {
 
     /* Begin command functions */
 
-    // Currently uses the deprecated method for initialization; will be simplified with new method
-    public void initSDK(String serverEnvironmentString, String accessToken, CallbackContext callbackContext) {
+    public void initSDK(String serverEnvironmentString, String accessToken, String propertyId, CallbackContext callbackContext) {
+        Log.d(TAG, "initSDK serverEnvironmentString: " + serverEnvironmentString + ", accessToken: " + accessToken + ", propertyId: " + propertyId);
+        Bugsnag.leaveBreadcrumb("initSDK serverEnvironmentString: " + serverEnvironmentString + ", accessToken: " + accessToken + ", propertyId: " + propertyId);
 
-        // Create new stratisSDK object
-        MainActivity mainActivity = (MainActivity) cordova.getActivity();
+        if (isValidServerEnvironment(serverEnvironmentString) && accessToken != null && propertyId != null) {
+            MainActivity mainActivity = (MainActivity) cordova.getActivity();
+            Context appContext = mainActivity.getApplicationContext();
+            Map<String, String> logMap = new HashMap<String, String>();
+            logMap.put("app", "OnCell");
 
-        class InitCallback implements ResultCallback {
-            public void error(JSONObject error) { Log.e(TAG, "Error on StratisSDK init:" +  error.toString()); }
-            public void result(JSONObject r) { Log.d(TAG, "StratisSDK init result:" + r.toString()); }
-            public void done() { Log.d(TAG, "StratisSDK init done"); }
-            public void done(JSONObject r) { Log.d(TAG, "StratisSDK init done with result JSON:" + r.toString()); }
-        }
-        InitCallback initCallback = new InitCallback();
+            Configuration configuration = new Configuration(
+                    ServerEnvironment.valueOf(serverEnvironmentString),
+                    accessToken,
+                    true,
+                    logMap,
+                    propertyId
+            );
 
-        stratisSDK = new StratisSDK(mainActivity, initCallback);
+            stratisSDK = new StratisSDK(appContext, configuration);
 
-        // Set server environment
-        if (isValidServerEnvironment(serverEnvironmentString)) {
-            Log.d(TAG, "setServerEnvironment " + serverEnvironmentString);
-            Bugsnag.leaveBreadcrumb("serverEnvironmentString: " + serverEnvironmentString);
-
-            class ServerEnvironmentCallback implements ResultCallback {
-                public void error(JSONObject error) { Log.e(TAG, "Error on setServerEnvironment: " + error.toString()); }
-                public void result(JSONObject r) { Log.d(TAG, "setServerEnvironment result: " + r.toString()); }
-                public void done() { Log.d(TAG, "setServerEnvironment done"); }
-                public void done(JSONObject r) { Log.d(TAG, "setServerEnvironment done with result JSON: " + r.toString()); }
-            }
-            ServerEnvironmentCallback serverEnvironmentCallback = new ServerEnvironmentCallback();
-
-            stratisSDK.setServerEnvironment(StratisSDK.ServerEnvironment.valueOf(serverEnvironmentString), serverEnvironmentCallback);
-
-        } else {
-            callbackError(callbackContext,"Expected a valid server environment");
-            bugsnagNotify("Expected a valid server environment");
-        }
-
-        // Set access token
-        if (accessToken != null && accessToken.length() > 0) {
-            Log.d(TAG, "setAccessToken " + accessToken);
-
-            class AccessTokenCallback implements ResultCallback {
-                public void error(JSONObject error) { Log.e(TAG, "Error on setAccessToken: " + error.toString()); }
-                public void result(JSONObject r) { Log.d(TAG, "setAccessToken result: " + r.toString()); }
-                public void done() { Log.d(TAG, "setAccessToken done"); }
-                public void done(JSONObject r) { Log.d(TAG, "setAccessToken done with result JSON: " + r.toString()); }
-            }
-            AccessTokenCallback accessTokenCallback = new AccessTokenCallback();
-
-            stratisSDK.setAccessToken(accessToken, accessTokenCallback);
-        } else {
-            callbackError(callbackContext, "Expected an access token");
-            bugsnagNotify("Expected an access token");
-        }
-
-        // Return successfully
-        JSONObject r = new JSONObject();
-        try {
-            r.put("success", 1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        callbackContext.success(r.toString());
-    }
-
-
-    public void getLocks(String property, CallbackContext callbackContext) {
-
-        if (property != null && property.length() > 0) {
-            Bugsnag.leaveBreadcrumb("property: " + property);
-
-            class GetLocksCallback implements ResultCallback {
-                public void error(JSONObject error) {
-                    Log.e(TAG, "Error on getLocks: " + error.toString());
-                    bugsnagNotify(error.toString());
-                    callbackError(callbackContext, error.toString());
-                }
-                public void result(JSONObject r) {
-                    Log.d(TAG, "getLocks result: " + r.toString());
-                    Bugsnag.leaveBreadcrumb("getLocks result: " + r.toString());
-                    try {
-                        boolean gotLocks = addLocks((JSONArray) r.get("locks"));
-                        if (!gotLocks) {
-                            bugsnagNotify("No locks found by getLocks");
-                        }
-                    } catch (JSONException e) {
-                        Log.d(TAG, e.toString());
-                    }
-                }
-                public void done() {
-                    Log.d(TAG, "getLocks done");
-                    JSONArray locksJSON = new JSONArray(locks);
-                    callbackSuccess(callbackContext, locksJSON);
-                }
-                public void done(JSONObject r) {
-                    Log.d(TAG, "getLocks done with result JSON: " + r.toString());
-                    JSONArray locksJSON = new JSONArray(locks);
-                    callbackSuccess(callbackContext, locksJSON);
-                }
-            }
-            GetLocksCallback getLocksCallback = new GetLocksCallback();
-
-            stratisSDK.getLocks(property, getLocksCallback);
-        } else {
-            callbackError(callbackContext, "Expected a property ID");
-            bugsnagNotify("Expected a property ID");
+            // return successfully
+            callbackSuccess(callbackContext, null);
+        } else { // return with error
+            Log.e(TAG, "Missing or invalid parameters on initSDK");
+            bugsnagNotify("Missing or invalid parameters on initSDK");
+            callbackError(callbackContext, "Error initializing Stratis SDK");
         }
     }
 
 
-    public void scanLocks(Long seconds, CallbackContext callbackContext) {
-        if (seconds > 0) {
+    public void getLocks(CallbackContext callbackContext) {
+        Log.d(TAG, "getLocks");
+        stratisSDK.setDeviceAccessListener(new OnCellStratisDeviceAccessListener(callbackContext));
+        stratisSDK.fetchAccessibleDevices();
+    }
 
-            class ScanLocksCallback implements ResultCallback {
-                boolean foundLock;
-                public ScanLocksCallback() {
-                    super();
-                    foundLock = false;
+    private class OnCellStratisDeviceAccessListener implements StratisDeviceAccessListener {
+
+        private CallbackContext callbackContext;
+
+        public OnCellStratisDeviceAccessListener(CallbackContext cc) {
+            super();
+            this.callbackContext = cc;
+        }
+
+        @Override
+        public void stratisDeviceAccessRequestCompleted(@NotNull StratisSDK stratisSDK, @NotNull Collection<? extends StratisLock> collection, @Nullable StratisError stratisError) {
+            Log.d(TAG, "stratisDeviceAccessRequestCompleted");
+            if (stratisError == null) {
+                accessibleLocks = (Collection<StratisLock>) collection;
+                JSONArray locksJson = new JSONArray();
+                if (!accessibleLocks.isEmpty()) {
+                    locksJson = getLocksAsJson(accessibleLocks);
+                    Log.d(TAG, "accessibleLocks: " + locksJson.toString());
+                    Bugsnag.leaveBreadcrumb("accessibleLocks: " + locksJson.toString());
+                } else {
+                    bugsnagNotify("No accessible locks found");
                 }
-                public void error(JSONObject error) {
-                    Log.e(TAG, "Error on scanLocks: " + error.toString());
-                    bugsnagNotify(error.toString());
-                    callbackError(callbackContext, error.toString());
-                }
-                public void result(JSONObject r) {
-                    Log.d(TAG, "scanLocks result: " + r.toString());
-                    Bugsnag.leaveBreadcrumb("scanLocks result: " + r.toString());
-                    try {
-                        if (enableLock((JSONObject) r.get("lock"))) {
-                            foundLock = true;
-                        }
-                    } catch (JSONException e) {
-                        Log.d(TAG, e.toString());
-                    }
-                }
-                public void done() {
-                    Log.d(TAG, "scanLocks done");
-                    if (!foundLock) { bugsnagNotify("No locks found by scanLocks"); }
-                    JSONArray locksJSON = new JSONArray(locks);
-                    callbackSuccess(callbackContext, locksJSON);
-                }
-                public void done(JSONObject r) {
-                    Log.d(TAG, "scanLocks done with result JSON: " + r.toString());
-                    if (!foundLock) { bugsnagNotify("No locks found by scanLocks"); }
-                    JSONArray locksJSON = new JSONArray(locks);
-                    callbackSuccess(callbackContext, locksJSON);
-                }
+                callbackSuccess(callbackContext, locksJson);
+            } else {
+                Log.e(TAG, stratisError.getDebugDescription());
+                bugsnagNotify(stratisError.getDebugDescription());
+                callbackError(callbackContext, stratisError.getDebugMessage());
             }
-            ScanLocksCallback scanLocksCallback = new ScanLocksCallback();
+        }
+    }
 
-            stratisSDK.scanLocks(seconds, scanLocksCallback);
+
+    public void scanLocks(CallbackContext callbackContext) {
+        Log.d(TAG, "scanLocks");
+        if (accessibleLocks != null) {
+            discoveredLocks = new ArrayList<StratisLock>();
+            stratisSDK.setDeviceDiscoveryListener(new OnCellStratisDeviceDiscoveryListener(callbackContext));
+            stratisSDK.discoverActionableDevices(accessibleLocks);
         } else {
-            callbackError(callbackContext, "Expected seconds to scan");
-            bugsnagNotify("Expected seconds to scan");
+            Log.e(TAG, "scanLocks called before setting accessibleLocks");
+            callbackError(callbackContext, "Cannot scan locks before getting lock authorization");
+        }
+    }
+
+    private class OnCellStratisDeviceDiscoveryListener implements StratisDeviceDiscoveryListener {
+
+        private CallbackContext callbackContext;
+
+        public OnCellStratisDeviceDiscoveryListener(CallbackContext cc) {
+            super();
+            this.callbackContext = cc;
+        }
+
+        @Override
+        public void stratisDiscoveredDevices(@NotNull StratisSDK stratisSDK, @NotNull Collection<? extends StratisLock> collection) {
+            Log.d(TAG, "stratisDiscoveredDevices");
+            Log.d(TAG, collection.toString());
+            discoveredLocks.addAll(collection);
+        }
+
+        @Override
+        public void stratisDiscoveryCompleted(@NotNull StratisSDK stratisSDK) {
+            Log.d(TAG, "stratisDiscoveryCompleted");
+            JSONArray locksJson = new JSONArray();
+            if (!discoveredLocks.isEmpty()) {
+                locksJson = getLocksAsJson(discoveredLocks);
+                Log.d(TAG, "discoveredLocks: " + locksJson.toString());
+                Bugsnag.leaveBreadcrumb("discoveredLocks: " + locksJson.toString());
+            } else {
+                bugsnagNotify("No scanned locks discovered");
+            }
+            callbackSuccess(callbackContext, locksJson);
+        }
+
+        @Override
+        public void stratisDiscoveryEncounteredError(@NotNull StratisSDK stratisSDK, @NotNull StratisError stratisError) {
+            Log.e(TAG, "stratisDiscoveryEncounteredError");
+            Log.e(TAG, stratisError.getDebugDescription());
+            bugsnagNotify(stratisError.getDebugDescription());
+            callbackError(callbackContext, stratisError.getDebugMessage());
         }
     }
 
 
     public void activateLock(String lockId, String appointmentId, CallbackContext callbackContext) {
-        if (lockId != null && lockId.length() > 0 && appointmentId != null && appointmentId.length() > 0) {
-            Bugsnag.leaveBreadcrumb("lockId: " + lockId);
-            // appointmentId is no longer necessary for the Stratis SDK, but I'm leaving it here for debugging purposes
-            Bugsnag.leaveBreadcrumb("appointmentId: " + appointmentId);
+        Log.d(TAG, "activateLock");
+        Bugsnag.leaveBreadcrumb("lockId: " + lockId);
+        // appointmentId is no longer necessary for the Stratis SDK, but I'm leaving it here for debugging purposes
+        Bugsnag.leaveBreadcrumb("appointmentId: " + appointmentId);
 
-            class ActivateLockCallback implements ResultCallback {
-                public boolean responseSent;
-                public ActivateLockCallback() {
-                    super();
-                    responseSent = false;
-                }
-                public void error(JSONObject error) {
-                    Log.e(TAG, "Error on activateLock: " + error.toString());
-                    bugsnagNotify(error.toString());
-                    callbackError(callbackContext, error.toString());
-                    responseSent = true;
-                }
-                public void result(JSONObject r) {
-                    Log.d(TAG, "activateLock result: " + r.toString());
-                    Bugsnag.leaveBreadcrumb("activateLock result: " + r.toString());
-                    try {
-                        String message = r.get("message").toString();
-                        if (message.equals("ACTIVATION_SUCCESS")) {
-                            callbackSuccess(callbackContext, null);
-                            responseSent = true;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                public void done() {
-                    Log.d(TAG, "activateLock done");
-                }
-                public void done(JSONObject r) {
-                    Log.d(TAG, "activateLock done with result JSON: " + r.toString());
+        if (discoveredLocks != null ) {
+            StratisLock deviceToActivate = null;
+            for (StratisLock lock : discoveredLocks) {
+                if (lock.getIdentifier().equals(lockId)) {
+                    deviceToActivate = lock;
                 }
             }
-            ActivateLockCallback activateLockCallback = new ActivateLockCallback();
+            if (deviceToActivate != null) {
+                OnCellStratisDeviceActivationListener listener = new OnCellStratisDeviceActivationListener(callbackContext);
+                deviceToActivate.setListener(listener);
+                deviceToActivate.activate();
+                // return error to JS and send log to Bugsnag if we haven't unlocked device in 20 seconds
+                listener.startActivationTimer(20);
+            } else {
+                Log.e(TAG, "Cannot find lock to activate");
+                bugsnagNotify("Cannot find lock to activate");
+                callbackError(callbackContext, "Cannot find lock to activate");
+            }
+        } else {
+            Log.e(TAG, "Called activateLock before setting discoveredLocks");
+            callbackError(callbackContext, "Cannot activate lock before scanning for locks");
+        }
+    }
 
-            stratisSDK.activateLock(lockId, activateLockCallback);
+    private class OnCellStratisDeviceActivationListener implements StratisDeviceActivationListener {
 
-            // if we haven't sent a response to the front-end after 20 seconds, return error and log to Bugsnag
+        private CallbackContext callbackContext;
+        private Boolean responseSent = false;
+
+        public OnCellStratisDeviceActivationListener(CallbackContext cc) {
+            super();
+            this.callbackContext = cc;
+        }
+
+        public void startActivationTimer(Integer maxSeconds) {
+            // if we haven't sent a response to the front-end after X seconds, return error and log to Bugsnag
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG, "activateLock responseSent: " + activateLockCallback.responseSent);
-                    if (!activateLockCallback.responseSent) {
+                    Log.d(TAG, "activateLock responseSent: " + responseSent);
+                    if (!responseSent) {
                         bugsnagNotify("Lock activation took too long to complete");
                         callbackError(callbackContext,"Lock activation took too long to complete");
                     }
                 }
             };
             Handler handler = new Handler();
-            handler.postDelayed(runnable, 20*1000);
+            handler.postDelayed(runnable, maxSeconds*1000);
+        }
 
-        } else {
-            callbackContext.error("Expected a lock ID and appointment ID");
-            bugsnagNotify("Expected a lock ID and appointment ID");
+        @Override
+        public void stratisDeviceActivationDidPostEvent(@NotNull StratisLock stratisLock, @NotNull DeviceActivationEvent deviceActivationEvent, @Nullable StratisError stratisError) {
+            Log.d(TAG, "stratisDeviceActivationDidPostEvent");
+            if (stratisError == null) {
+                Log.d(TAG, deviceActivationEvent.toString());
+                if (deviceActivationEvent == DeviceActivationEvent.COMPLETE) {
+                    callbackSuccess(callbackContext, null);
+                    responseSent = true;
+                }
+            } else {
+                Log.e(TAG, stratisError.getDebugDescription());
+                bugsnagNotify(stratisError.getDebugDescription());
+                callbackError(callbackContext, stratisError.getDebugMessage());
+                responseSent = true;
+            }
         }
     }
 
@@ -294,66 +288,49 @@ public class OnCellStratis extends CordovaPlugin {
 
     /* Begin utility functions */
 
-    private boolean addLocks(JSONArray locksJSON) {
-        Log.d(TAG, "addLocks: " + locksJSON.toString());
-        locks.clear();
-        if (locksJSON != null) {
-            for (int i=0;i<locksJSON.length();i++) {
-                try {
-                    JSONObject lock = locksJSON.getJSONObject(i);
-                    // rename some fields from the response to match iOS
-                    lock.put("lockId", lock.get("id"));
-                    lock.remove("id");
-                    lock.put("unlockTechnology", lock.get("unlock_technology"));
-                    lock.remove("unlock_technology");
-                    lock.put("rssi", 0);
-                    lock.put("isEnabled", false);
-                    locks.add(lock);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (locks.size() > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean enableLock(JSONObject scannedLock) {
-        Log.d(TAG, "enableLock: " + scannedLock.toString());
-        boolean enabledLock = false;
-        if (scannedLock != null) {
-            try {
-                String scannedLockId = scannedLock.getString("id");
-                for (int i = 0; i < locks.size(); i++) {
-                    JSONObject lock = locks.get(i);
-                    String lockId = lock.getString("lockId");
-                    if (scannedLockId.equals(lockId)) {
-                        lock.put("isEnabled", true);
-                        lock.put("rssi", scannedLock.get("rssi"));
-                        enabledLock = true;
-                    }
-                    locks.set(i, lock);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return enabledLock;
-    }
-
     private boolean isValidServerEnvironment(String serverEnvironmentString) {
         // Valid serverEnvironmentStrings:
         // DEV, SANDBOX, TEST, PROD
-        // see https://developer.stratisiot.com/sdk/android/com.stratisiot.stratissdk/-server-environment/ for more info
+        // see https://developer.stratisiot.com/sdk/v4/android/com.stratisiot.stratissdk.constants/-server-environment/ for more info
         try {
-            StratisSDK.ServerEnvironment.valueOf(serverEnvironmentString);
+            ServerEnvironment.valueOf(serverEnvironmentString);
             return true;
         } catch (IllegalArgumentException e) {
             return false;
         }
     }
+
+
+    private JSONArray getLocksAsJson(Collection locks) {
+        ExclusionStrategy strategy = new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes field) {
+                if (field.getName().matches("errorAggregator|metaData|advertisementData|bluetoothDevice|authToken")) {
+                    return true;
+                }
+                return false;
+            }
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return false;
+            }
+        };
+
+        Gson gson = new GsonBuilder()
+                .addSerializationExclusionStrategy(strategy)
+                .create();
+        String locksGson = gson.toJson(locks);
+
+        JSONArray locksJson = new JSONArray();
+        try {
+            locksJson = new JSONArray(locksGson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return locksJson;
+    }
+
 
     private void callbackSuccess(CallbackContext callbackContext, JSONArray locksJSON) {
         JSONObject r = new JSONObject();
@@ -368,6 +345,7 @@ public class OnCellStratis extends CordovaPlugin {
         callbackContext.success(r.toString());
     }
 
+
     private void callbackError(CallbackContext callbackContext, String message) {
         JSONObject r = new JSONObject();
         try {
@@ -381,6 +359,7 @@ public class OnCellStratis extends CordovaPlugin {
         callbackContext.error(r.toString());
     }
 
+
     private void bugsnagNotify(String errorMessage) {
         class lockException extends Exception {
             public lockException(String message) {
@@ -391,6 +370,5 @@ public class OnCellStratis extends CordovaPlugin {
     }
 
     /* End utility functions*/
-
 
 }
