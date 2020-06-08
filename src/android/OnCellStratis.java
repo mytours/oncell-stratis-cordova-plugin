@@ -113,9 +113,7 @@ public class OnCellStratis extends CordovaPlugin {
             // return successfully
             callbackSuccess(callbackContext, null);
         } else { // return with error
-            Log.e(TAG, "Missing or invalid parameters on initSDK");
-            bugsnagNotify("Missing or invalid parameters on initSDK");
-            callbackError(callbackContext, "Error initializing Stratis SDK");
+            callbackError(callbackContext, "Missing or invalid parameters when initializing Stratis SDK");
         }
     }
 
@@ -150,8 +148,6 @@ public class OnCellStratis extends CordovaPlugin {
                 }
                 callbackSuccess(callbackContext, locksJson);
             } else {
-                Log.e(TAG, stratisError.getDebugDescription());
-                bugsnagNotify(stratisError.getDebugDescription());
                 callbackError(callbackContext, stratisError.getDebugMessage());
             }
         }
@@ -165,7 +161,6 @@ public class OnCellStratis extends CordovaPlugin {
             stratisSDK.setDeviceDiscoveryListener(new OnCellStratisDeviceDiscoveryListener(callbackContext));
             stratisSDK.discoverActionableDevices(accessibleLocks);
         } else {
-            Log.e(TAG, "scanLocks called before setting accessibleLocks");
             callbackError(callbackContext, "Cannot scan locks before getting lock authorization");
         }
     }
@@ -203,8 +198,6 @@ public class OnCellStratis extends CordovaPlugin {
         @Override
         public void stratisDiscoveryEncounteredError(@NotNull StratisSDK stratisSDK, @NotNull StratisError stratisError) {
             Log.e(TAG, "stratisDiscoveryEncounteredError");
-            Log.e(TAG, stratisError.getDebugDescription());
-            bugsnagNotify(stratisError.getDebugDescription());
             callbackError(callbackContext, stratisError.getDebugMessage());
         }
     }
@@ -230,12 +223,9 @@ public class OnCellStratis extends CordovaPlugin {
                 // return error to JS and send log to Bugsnag if we haven't unlocked device in 20 seconds
                 listener.startActivationTimer(20);
             } else {
-                Log.e(TAG, "Cannot find lock to activate");
-                bugsnagNotify("Cannot find lock to activate");
                 callbackError(callbackContext, "Cannot find lock to activate");
             }
         } else {
-            Log.e(TAG, "Called activateLock before setting discoveredLocks");
             callbackError(callbackContext, "Cannot activate lock before scanning for locks");
         }
     }
@@ -257,7 +247,6 @@ public class OnCellStratis extends CordovaPlugin {
                 public void run() {
                     Log.d(TAG, "activateLock responseSent: " + responseSent);
                     if (!responseSent) {
-                        bugsnagNotify("Lock activation took too long to complete");
                         callbackError(callbackContext,"Lock activation took too long to complete");
                     }
                 }
@@ -276,8 +265,6 @@ public class OnCellStratis extends CordovaPlugin {
                     responseSent = true;
                 }
             } else {
-                Log.e(TAG, stratisError.getDebugDescription());
-                bugsnagNotify(stratisError.getDebugDescription());
                 callbackError(callbackContext, stratisError.getDebugMessage());
                 responseSent = true;
             }
@@ -347,6 +334,8 @@ public class OnCellStratis extends CordovaPlugin {
 
 
     private void callbackError(CallbackContext callbackContext, String message) {
+        Log.e(TAG, message);
+        bugsnagNotify(message);
         JSONObject r = new JSONObject();
         try {
             r.put("success", 0);
