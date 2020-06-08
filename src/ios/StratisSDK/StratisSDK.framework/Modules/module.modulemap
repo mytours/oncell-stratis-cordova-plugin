@@ -1,8 +1,11 @@
 framework module StratisSDK {
-  umbrella header "StratisSDK.h"
+    umbrella header "StratisSDK.h"
 
-  export *
-  module * { export * }
+    explicit module keccaktiny {
+        private header "keccak-tiny.h"
+    }
+    
+    export *
 }
 
 module StratisSDK.Swift {

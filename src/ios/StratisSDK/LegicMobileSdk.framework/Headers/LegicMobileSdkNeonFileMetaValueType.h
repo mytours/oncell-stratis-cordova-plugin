@@ -11,7 +11,7 @@
 /**
  * Enum value to identity the value type of a <code>LegicNeonFileMetaValue</code>.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkNeonFileMetaValueType) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkNeonFileMetaValueType) {
     /**
      * The value type of the <code>LegicNeonFile</code> Meta is unknown.<br>
      * This type should not occur in normal operation, but might occur to handle future value types on older SDK versions.

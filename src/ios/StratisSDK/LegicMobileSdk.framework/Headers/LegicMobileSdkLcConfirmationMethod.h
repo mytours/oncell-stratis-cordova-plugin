@@ -11,7 +11,7 @@
 /**
  * Enum value to define the required confirmation method in the initiateRegistration call.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkLcConfirmationMethod) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkLcConfirmationMethod) {
     /**
      * Confirmation token is sent via email.<br>
      * To be used when using an email address as public registration ID in the initiateRegistration call.

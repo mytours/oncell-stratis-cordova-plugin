@@ -11,7 +11,7 @@
 /**
  * The default marker on a Legic neon file.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkNeonFileDefaultMode) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkNeonFileDefaultMode) {
     /**
      * File can be selected with project ID and file ID consisting of all zeros (16 bytes).
      */

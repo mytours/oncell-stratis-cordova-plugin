@@ -11,7 +11,7 @@
 /**
  * Enum value to identify a RF interface.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkRfInterface) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkRfInterface) {
     /**
      * The interface identified is a Bluetooth (BLE) interface
      */

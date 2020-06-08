@@ -11,7 +11,7 @@
 /**
  * Enum value to identify the state of the RF interface.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkRfInterfaceState) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkRfInterfaceState) {
     /**
      * RF interface state is unknown (e.g. when starting the mobile app)
      */

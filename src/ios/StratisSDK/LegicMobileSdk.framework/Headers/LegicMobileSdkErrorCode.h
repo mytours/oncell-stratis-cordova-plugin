@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "LegicMobileSdkStatus.h"
 
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkErrorCode) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkErrorCode) {
     /**
      * Signals success (no error)
      */

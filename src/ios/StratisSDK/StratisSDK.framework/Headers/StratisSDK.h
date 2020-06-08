@@ -2,11 +2,11 @@
 //  StratisSDK.h
 //  StratisSDK
 //
-//  Created by Michael Matranga on 10/21/19.
-//  Copyright © 2019 Stratis. All rights reserved.
+//  Created by Michael Matranga on 11/26/19.
+//  Copyright © 2019 STRATIS. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for StratisSDK.
 FOUNDATION_EXPORT double StratisSDKVersionNumber;

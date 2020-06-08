@@ -4,274 +4,274 @@ import Bugsnag
 @objc(OnCellStratis) class OnCellStratis : CDVPlugin {
     
     var stratisSdk: StratisSDK!
-    var locks = [Lock]()
-    var getLocksError = false;
+    var onCellStratisDeviceAccessDelegate: OnCellStratisDeviceAccessDelegate!
+    var onCellStratisDeviceDiscoveryDelegate: OnCellStratisDeviceDiscoveryDelegate!
+    var accessibleLocks: [StratisLock] = []
+    var discoveredLocks: [StratisLock] = []
+    
+    // Begin command functions
     
     @objc(initSDK:)
     func initSDK(command: CDVInvokedUrlCommand) {
+        NSLog("initSDK")
+        
         let serverEnvironmentString = command.arguments[0] as? String ?? ""
         let accessToken = command.arguments[1] as? String ?? ""
-        
+        let propertyID = command.arguments[2] as? String ?? ""
+
         Bugsnag.setBreadcrumbCapacity(50)
-        Bugsnag.leaveBreadcrumb(withMessage: "serverEnvironent: \(serverEnvironmentString)")
-        
-        var serverEnv = ServerEnvironment.SANDBOX; // Sandbox by default
-        if (serverEnvironmentString == "PROD") {
+        Bugsnag.leaveBreadcrumb(withMessage: "initSDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
+
+        var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
+        if serverEnvironmentString == "PROD" {
             serverEnv = ServerEnvironment.PROD;
         }
-        
+
         let configuration = Configuration(
             serverEnvironment: serverEnv,
             accessToken: accessToken,
+            propertyID: propertyID,
             remoteLoggingEnabled: true,
             loggingMetadata: ["app": "OnCell"]
         )
-        
+
         stratisSdk = StratisSDK(configuration: configuration)
         
-        let message = "{\"success\": 1}"
+        self.accessibleLocks = [StratisLock]()
+        self.discoveredLocks = [StratisLock]()
+
+        callbackSuccess(callbackId: command.callbackId, locksJSON: nil)
+    }
+    
+    @objc(getLocks:)
+    func getLocks(command: CDVInvokedUrlCommand) {
+        NSLog("getLocks")
+
+        if self.stratisSdk != nil {
+            self.accessibleLocks.removeAll()
+            
+            self.onCellStratisDeviceAccessDelegate = OnCellStratisDeviceAccessDelegate(onCellStratis: self, callbackId: command.callbackId)
+            stratisSdk.deviceAccessDelegate = self.onCellStratisDeviceAccessDelegate
+
+            stratisSdk.fetchAccessibleDevices()
+        } else {
+            callbackError(callbackId: command.callbackId, errorMessage: "Cannot get lock authorization before initializing StratisSDK")
+        }
+    }
+    
+    class OnCellStratisDeviceAccessDelegate: StratisDeviceAccessDelegate {
+        var onCellStratis: OnCellStratis!
+        var callbackId = ""
+        
+        init(onCellStratis: OnCellStratis, callbackId: String) {
+            self.onCellStratis = onCellStratis
+            self.callbackId = callbackId
+        }
+        
+        func stratisDeviceAccessRequestCompleted(_ stratisSDK: StratisSDK, devices: [StratisLock], error: StratisError?) {
+            NSLog("stratisDeviceAccessRequestCompleted result: \(devices)")
+            if error == nil {
+                onCellStratis.accessibleLocks = devices
+                if onCellStratis.accessibleLocks.isEmpty {
+                    onCellStratis.bugsnagNotify(exceptionName: "lockException", exceptionReason: "No accessible locks found")
+                }
+                let locksJson = onCellStratis.getLocksAsJson(locks: onCellStratis.accessibleLocks)
+                Bugsnag.leaveBreadcrumb(withMessage: "accessibleLocks: \(locksJson)")
+                onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: locksJson)
+            } else {
+                onCellStratis.callbackError(callbackId: callbackId, errorMessage: error!.debugDescription)
+            }
+        }
+    }
+    
+
+    @objc(scanLocks:)
+    func scanLocks(command: CDVInvokedUrlCommand) {
+        NSLog("scanLocks")
+        
+        if !self.accessibleLocks.isEmpty {
+            self.discoveredLocks.removeAll()
+            
+            self.onCellStratisDeviceDiscoveryDelegate = OnCellStratisDeviceDiscoveryDelegate(onCellStratis: self, callbackId: command.callbackId)
+            stratisSdk.deviceDiscoveryDelegate = self.onCellStratisDeviceDiscoveryDelegate
+            
+            stratisSdk.discoverActionableDevices(self.accessibleLocks)
+        } else {
+            callbackError(callbackId: command.callbackId, errorMessage: "Cannot scan locks before getting lock authorization")
+        }
+    }
+    
+    class OnCellStratisDeviceDiscoveryDelegate: StratisDeviceDiscoveryDelegate {
+        var onCellStratis: OnCellStratis!
+        var callbackId = ""
+        
+        init(onCellStratis: OnCellStratis, callbackId: String) {
+            self.onCellStratis = onCellStratis
+            self.callbackId = callbackId
+        }
+        
+        func stratisDiscoveredDevices(_ stratisSDK: StratisSDK, devices: [StratisLock]) {
+            NSLog("stratisDiscoveredDevices result: \(devices)")
+            onCellStratis.discoveredLocks.append(contentsOf: devices)
+        }
+
+        func stratisDiscoveryEncounteredError(_ stratisSDK: StratisSDK, error: StratisError) {
+            NSLog("stratisDiscoveryEncounteredError: \(error)")
+            onCellStratis.callbackError(callbackId: callbackId, errorMessage: error.debugDescription)
+        }
+
+        func stratisDiscoveryCompleted(_ stratisSDK: StratisSDK) {
+            NSLog("stratisDiscoveryCompleted")
+            if onCellStratis.discoveredLocks.isEmpty {
+                onCellStratis.bugsnagNotify(exceptionName: "lockException", exceptionReason: "No scanned locks discovered")
+            }
+            let locksJson = onCellStratis.getLocksAsJson(locks: onCellStratis.discoveredLocks)
+            Bugsnag.leaveBreadcrumb(withMessage: "discoveredLocks: \(locksJson)")
+            onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: locksJson)
+        }
+    }
+
+    @objc(activateLock:)
+    func activateLock(command: CDVInvokedUrlCommand) {
+        
+        let lockId = command.arguments[0] as? String ?? ""
+        let appointmentId = command.arguments[1] as? String ?? ""
+        NSLog("activateLock lockId: \(lockId) appointmentId: \(appointmentId)")
+        Bugsnag.leaveBreadcrumb(withMessage: "lockId: \(lockId)")
+        Bugsnag.leaveBreadcrumb(withMessage: "appointmentId: \(appointmentId)")
+        
+        if !self.discoveredLocks.isEmpty {
+            var foundLock = false
+            for lock in self.discoveredLocks {
+                if lock.identifier == lockId {
+                    let deviceToActivate = lock
+                    foundLock = true
+                    let onCellStratisDeviceActivationDelegate = OnCellStratisDeviceActivationDelegate(onCellStratis: self, callbackId: command.callbackId)
+                    deviceToActivate.activationDelegate = onCellStratisDeviceActivationDelegate
+                    NSLog("Activating lock...")
+                    deviceToActivate.activate()
+                    // return error to JS and send log to Bugsnag if we haven't unlocked device in 20 seconds
+                    onCellStratisDeviceActivationDelegate.startActivationTimer()
+                    break
+                }
+            }
+            if !foundLock {
+                callbackError(callbackId: command.callbackId, errorMessage: "Cannot find lock to activate")
+            }
+        } else {
+            callbackError(callbackId: command.callbackId, errorMessage: "No discovered locks to activate")
+        }
+    }
+    
+    class OnCellStratisDeviceActivationDelegate: StratisDeviceActivationDelegate {
+        var onCellStratis: OnCellStratis!
+        var callbackId = ""
+        var responseSent = false
+        
+        init(onCellStratis: OnCellStratis, callbackId: String) {
+            self.onCellStratis = onCellStratis
+            self.callbackId = callbackId
+        }
+        
+        func stratisDeviceActivationDidPostEvent(_ event: StratisLock.ActivationEvent, forDevice device: StratisLock, withError error: StratisError?) {
+            NSLog("stratisDeviceActivationDidPostEvent with callbackId: \(self.callbackId), event: \(event), forDevice: \(device), error: \(String(describing: error))")
+            if error == nil {
+                if event.rawValue == ActivationEvent.activationStarted.rawValue {
+                    NSLog("activationStarted");
+                } else if event.rawValue == ActivationEvent.activationComplete.rawValue {
+                    NSLog("activationComplete");
+                    onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: nil)
+                    responseSent = true;
+                } else if event.rawValue == ActivationEvent.presentDeviceToLock.rawValue {
+                    NSLog("presentDeviceToLock");
+                }
+            } else {
+                onCellStratis.callbackError(callbackId: callbackId, errorMessage: error.debugDescription)
+                responseSent = true;
+            }
+        }
+        
+        func startActivationTimer() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                if !self.responseSent { // If we haven't responded to the frontend by the timeout (20s)
+                    self.onCellStratis.callbackError(callbackId: self.callbackId, errorMessage: "Lock activation took too long")
+                }
+            }
+        }
+    }
+    
+    // End command functions
+    
+    // Begin utility functions
+    
+    func callbackSuccess(callbackId: String, locksJSON: String?) {
+        var message = "{\"success\": 1}"
+        if locksJSON != nil {
+            message = "{\"success\": 1, \"locks\": \(locksJSON!)}"
+        }
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
             messageAs: message
         )
         self.commandDelegate!.send(
             pluginResult,
-            callbackId: command.callbackId
+            callbackId: callbackId
         )
     }
     
-    @objc(getLocks:)
-    func getLocks(command: CDVInvokedUrlCommand) {
-        
-        let propertyId = command.arguments[0] as? String ?? ""
-        self.getLocksError = false;
-        
-        Bugsnag.leaveBreadcrumb(withMessage: "propertyId: \(propertyId)")
-        
-        let callback = StratisSDKCallback(
-                resultCallback: { (res) in
-                    Bugsnag.leaveBreadcrumb(withMessage: "getLocks resultCallback: \(res)")
-                    guard let locks = res["locks"] as? [[String: Any]] else { return }
-                    self.locks = locks.compactMap({ Lock(fromResponse: $0) })
-            },
-                doneCallback: { (_) in
-                    let locksJson = self.getLocksAsJson()
-                    if (locksJson == "[]") { self.bugsnagNotify(exceptionName: "getLocksEmpty", exceptionReason: "No locks found by getLocks") }
-                    let message = "{\"success\": 1, \"locks\": \(locksJson)}"
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_OK,
-                        messageAs: message
-                    )
-                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            },
-                errorCallback: { (err) in
-                    self.getLocksError = true;
-                    var message = "{\"success\": 0, \"error\": \"Unable to get locks\"}"
-                    if let errorMessage = err["message"] as? String {
-                        message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
-                    }
-                    self.bugsnagNotify(exceptionName: "getLocksError", exceptionReason: message)
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_ERROR,
-                        messageAs: message
-                    )
-                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            }
+    func callbackError(callbackId: String, errorMessage: String) {
+        NSLog(errorMessage)
+        bugsnagNotify(exceptionName: "LockException", exceptionReason: errorMessage)
+        let message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
+        let pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: message
         )
-        
-        stratisSdk.getLocks(property: propertyId, callback: callback)
+        self.commandDelegate!.send(pluginResult, callbackId: callbackId)
     }
     
-    @objc(scanLocks:)
-    func scanLocks(command: CDVInvokedUrlCommand) {
-        
-        let seconds = command.arguments[0] as? Double ?? 0
-        var foundLock = false
-        
-        let callback = StratisSDKCallback(
-                resultCallback: { (res) in
-                    Bugsnag.leaveBreadcrumb(withMessage: "scanLocks resultCallback: \(res)")
-                    guard
-                        let lockResponse = res["lock"] as? [String: Any],
-                        let scannedLock = Lock(fromResponse: lockResponse),
-                        let lock = self.locks.first(where: { $0.lockId == scannedLock.lockId })
-                        else { return }
-                    lock.enable(lock: scannedLock)
-                    foundLock = true
-            },
-                doneCallback: { (_) in
-                    let locksJson = self.getLocksAsJson()
-                    if (!foundLock) { self.bugsnagNotify(exceptionName: "scanLocksEmpty", exceptionReason: "No locks found by scanLocks") }
-                    let message = "{\"success\": 1, \"locks\": \(locksJson)}"
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_OK,
-                        messageAs: message
-                    )
-                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            },
-                errorCallback: { (err) in
-                    var message = "{\"success\": 0, \"error\": \"Unable to scan locks\"}"
-                    if let errorMessage = err["message"] as? String {
-                        message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
-                    }
-                    self.bugsnagNotify(exceptionName: "scanLocksError", exceptionReason: message)
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_ERROR,
-                        messageAs: message
-                    )
-                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            }
-        )
-        
-        stratisSdk.scanLocks(seconds: seconds, callback: callback)
-    }
-    
-    @objc(activateLock:)
-    func activateLock(command: CDVInvokedUrlCommand) {
-        let lockId = command.arguments[0] as? String ?? ""
-        let appointmentId = command.arguments[1] as? String ?? ""
-        var responseSent = false
-        
-        Bugsnag.leaveBreadcrumb(withMessage: "lockId: \(lockId)")
-        // appointmentId is no longer necessary for the Stratis SDK, but I'm leaving it here for debugging purposes
-        Bugsnag.leaveBreadcrumb(withMessage: "appointmentId: \(appointmentId)")
-        
-        let callback = StratisSDKCallback(
-            resultCallback: { (res) in
-                Bugsnag.leaveBreadcrumb(withMessage: "activateLock resultCallback: \(res)")
-                let resultMessage = res["message"] as? String ?? ""
-                if (resultMessage == "ACTIVATION_SUCCESS") {
-                    let message = "{\"success\": 1}" //
-                    let pluginResult = CDVPluginResult(
-                        status: CDVCommandStatus_OK,
-                        messageAs: message
-                    )
-                    self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-                    responseSent = true
-                }
-            },
-            doneCallback: { (_) in
-                // Ignore done callbacks here since more than one is sent in the process of activating
-                // Use ACTIVATION_SUCCESS result callback instead
-            },
-            errorCallback: { (err) in
-                var message = "{\"success\": 0, \"error\": \"Unable to activate lock\"}"
-                if let errorMessage = err["message"] as? String {
-                     message = "{\"success\": 0, \"error\": \"\(errorMessage)\"}"
-                }
-                self.bugsnagNotify(exceptionName: "activateLockError", exceptionReason: message)
-                let pluginResult = CDVPluginResult(
-                    status: CDVCommandStatus_ERROR,
-                    messageAs: message
-                )
-                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-                responseSent = true
-            }
-        )
-        
-        stratisSdk.activateLock(lockId: lockId, callback: callback)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
-            if (!responseSent) { // If we haven't responded to the frontend by the timeout (20s)
-                let message = "{\"success\": 0, \"error\": \"Lock activation took to long to complete\"}"
-                self.bugsnagNotify(exceptionName: "activateLockTimeout", exceptionReason: message)
-                let pluginResult = CDVPluginResult(
-                    status: CDVCommandStatus_ERROR,
-                    messageAs: message
-                )
-                self.commandDelegate!.send(pluginResult, callbackId: command.callbackId)
-            }
-        }
-    }
-    
-    @objc(getLocksAsJson)
-    func getLocksAsJson() -> String {
-        var jsonString = "[]"
-        if (!self.getLocksError) {
-            if (!self.locks.isEmpty) {
-                let encoder = JSONEncoder()
-                if let jsonData = try? encoder.encode(self.locks) {
-                    jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
-                }
-            }
-        }
-        return jsonString
-    }
-    
-    @objc(bugsnagNotify: :)
     func bugsnagNotify(exceptionName:String, exceptionReason:String) {
         let exception = NSException(name:NSExceptionName(rawValue: exceptionName),
                                     reason:exceptionReason,
                                     userInfo:nil)
         Bugsnag.notify(exception)
     }
-}
-
-class StratisSDKCallback: ResultCallback {
-    let resultCallback: (([String: Any]) -> Void)?
-    let doneCallback: (([String: Any]) -> Void)?
-    let errorCallback: (([String: Any]) -> Void)?
-    let messageCallback: ((String) -> Void)?
     
-    init(
-        resultCallback: (([String: Any]) -> Void)? = nil,
-        doneCallback: (([String: Any]) -> Void)? = nil,
-        errorCallback: (([String: Any]) -> Void)? = nil,
-        messageCallback: ((String) -> Void)? = nil
-        ) {
-        self.resultCallback = resultCallback
-        self.doneCallback = doneCallback
-        self.errorCallback = errorCallback
-        self.messageCallback = messageCallback
-    }
-    
-    func result(res: [String: Any]) {
-        NSLog("Result callback called with: \(res)")
-        if let message = res["message"] as? String {
-            self.messageCallback?(message)
+    func getLocksAsJson(locks: [StratisLock]) -> String {
+        var jsonString = "[]"
+        if !locks.isEmpty {
+            let codableLocks = locks.compactMap({ $0.toCodable() })
+            let encoder = JSONEncoder()
+            if let jsonData = try? encoder.encode(codableLocks) {
+                jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
+            }
         }
-        self.resultCallback?(res)
+        return jsonString
     }
     
-    func done(done: [String: Any]) {
-        NSLog("Done callback called with: \(done)")
-        self.doneCallback?(done)
-    }
+    // End utility functions
     
-    func error(err: [String: Any]) {
-        NSLog("Error callback called with: \(err)")
-        if let message = err["message"] as? String {
-            self.messageCallback?(message)
-        }
-        self.errorCallback?(err)
-    }
 }
 
 
-class Lock: Codable{
-    var lockId: String
+struct CodableLock: Codable {
+    var identifier: String
     var name: String
     var model: String
-    var unlockTechnology: String
-    var rssi: Int
-    var isEnabled = false
+    var isActionable: Bool
+}
+
+
+extension StratisLock {
     
-    init?(fromResponse res: [String: Any]) {
-        guard
-            let lockId = res["id"] as? String,
-            let name = res["name"] as? String,
-            let model = res["model"] as? String,
-            let unlockTechnology = res["unlock_technology"] as? String
-            else { return nil }
-        self.lockId = lockId
-        self.name = name
-        self.model = model
-        self.unlockTechnology = unlockTechnology
-        self.rssi = res["rssi"] as? Int ?? 0
-    }
-    
-    func enable(lock: Lock) {
-        self.isEnabled = true
-        self.rssi = lock.rssi
+    func toCodable() -> CodableLock{
+        let codableLock = CodableLock(
+            identifier: self.identifier,
+            name: self.name,
+            model: self.model,
+            isActionable: self.actionable
+        )
+        
+        return codableLock
     }
 }

@@ -11,7 +11,7 @@
 /**
  * Enum value to define/identify the mode for LC messages.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkLcMessageMode) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkLcMessageMode) {
     /**
      * LC messages are sent/received in plain (unencrypted).<br>
      * This mode is used prior to successful authentication against an existing file.

@@ -12,7 +12,7 @@
  * Enum value to classify the error status.<br>
  * Used in LegicMobileSdkExceptions.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkErrorReasonType) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkErrorReasonType) {
     /**
      * Signals success (no error)
      */
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, E_LegicMobileSdkErrorReasonType) {
 /**
  * Enum value classifying the error reason.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkErrorReasonSdkError) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkErrorReasonSdkError) {
     /**
      * Signals success (no error)
      */
@@ -107,7 +107,12 @@ typedef NS_ENUM(NSInteger, E_LegicMobileSdkErrorReasonSdkError) {
     /**
      * The SDK Queue for Passwords is full.
      */
-    E_LegicMobileSdkErrorReasonSdkError_PASSWORD_QUEUE_FULL = 60
+    E_LegicMobileSdkErrorReasonSdkError_PASSWORD_QUEUE_FULL = 60,
+    
+    /**
+     * The storage on the device is full. 
+     */
+    E_LegicMobileSdkErrorReasonSdkError_DEVICE_STORAGE_FULL = 70
 	
 } NS_SWIFT_NAME(LegicMobileSdkErrorReasonSdkError);
 

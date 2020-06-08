@@ -11,7 +11,7 @@
 /**
  * Enum value to identify the state of a LegicNeonFile.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkNeonFileState) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkNeonFileState) {
     /**
      * Status for file definitions that are available for deployment
      */

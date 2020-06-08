@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkPushType) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkPushType) {
     /**
      * Push token of type APNS (Apple Push Notification Service)
      */

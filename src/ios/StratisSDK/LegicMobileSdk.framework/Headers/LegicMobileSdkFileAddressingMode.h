@@ -11,7 +11,7 @@
 /**
  * Enum value to identify the addressing mode.
  */
-typedef NS_ENUM(NSInteger, E_LegicMobileSdkFileAddressingMode) {
+typedef NS_CLOSED_ENUM(NSInteger, E_LegicMobileSdkFileAddressingMode) {
     /**
      * SDK exposes HCE and BLE services based on the LC Project IDs of the LEGIC neon files.
      */
