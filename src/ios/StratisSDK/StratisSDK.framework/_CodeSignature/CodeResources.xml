@@ -10,191 +10,71 @@
 		</data>
 		<key>Headers/StratisSDK.h</key>
 		<data>
-		9E7pSGU+EuVoUHJsChPKtI9CvEI=
+		YBDxnq+s5/T2fDakgnPu3WhufjU=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		XnRIEgCguFakiLwCiqv1EwMrIj0=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdk.h</key>
-		<data>
-		tVVCFq119eFSOQjROKxLPe6Daf0=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkBaseEventDelegate.h</key>
-		<data>
-		DSih5YHrTPZuoC8lUYb2CoL2M54=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkError.h</key>
-		<data>
-		pEFsgvFqeQknn8N8HHd4lqHPt3A=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkErrorCode.h</key>
-		<data>
-		4AgJ0ldVx28Li/VW95xVWGUsk8M=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkErrorReason.h</key>
-		<data>
-		0XrEZTYp05PLGkne1z3hzr7s9pE=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkEventDelegate.h</key>
-		<data>
-		ldpFWOru4JHF4EbeExFgDz04jxQ=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkFileAddressingMode.h</key>
-		<data>
-		ZxCO6R5v9HcCXCbvmYXBjAWj5dE=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkLcConfirmationMethod.h</key>
-		<data>
-		DsamtNXx5BJC1EU0efARZZ8ColI=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkLcMessageMode.h</key>
-		<data>
-		wESUefn872FHIzAxB6DA4ONQos4=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkManager.h</key>
-		<data>
-		XD5nxOFhVtPp9+urNGXQpI2oJFg=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkManagerFactory.h</key>
-		<data>
-		ydkBZ8xayUqPw9gSa1vyQL3cIyM=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFile.h</key>
-		<data>
-		wRvfTqjz8Z2fxgb2sqXnLViy4SM=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileDefaultMode.h</key>
-		<data>
-		JjyQWDK5DbRq1+y1G1yIJOiDa0c=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileEventDelegate.h</key>
-		<data>
-		QrBQu0rI9yq3Y8I1j5z7gTi26ug=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileMetaValue.h</key>
-		<data>
-		pvyfrrIUtQaE3Gk14qVi88ci6pc=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileMetaValueType.h</key>
-		<data>
-		8/j+iyzE02HrdIrv9zCRR3AMdcg=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileParameter.h</key>
-		<data>
-		wpO+9rhm2ipq7UQeQwdspv9Fiyo=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileState.h</key>
-		<data>
-		UHav9d/OF+mXORTscCS1um+De+I=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonSubFile.h</key>
-		<data>
-		BRBJdTDVBRrC34CPutwdO4qv7+U=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkPasswordEventDelegate.h</key>
-		<data>
-		x7kj1wj8ZHlAOviIdEuoIUrCLWA=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkPushType.h</key>
-		<data>
-		Ne7PbuWFMuFCAH9D2+dEV4nMiUw=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkReaderEventDelegate.h</key>
-		<data>
-		U58rPjot+y14ELNJUlazyiJRow8=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRegistrationEventDelegate.h</key>
-		<data>
-		Udwrawmc1sHTLyUAKBEMdJynMV0=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRfInterface.h</key>
-		<data>
-		YkM3uqkfZ2u5wVk1BcmzUdz6W5M=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRfInterfaceState.h</key>
-		<data>
-		zO6NUvlyquSlk5vat5UOt2j0g74=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkStatus.h</key>
-		<data>
-		hyGVZwlCKHV46mxGvBonPDcXBRM=
-		</data>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkSynchronizeEventDelegate.h</key>
-		<data>
-		lU5Ie4525ETTk9ZErrx3Wzmu0zg=
-		</data>
-		<key>LegicMobileSdk.framework/Info.plist</key>
-		<data>
-		ewsj1aXvP5wFAkyJrOMh7T4Jxm0=
-		</data>
-		<key>LegicMobileSdk.framework/LegicMobileSdk</key>
-		<data>
-		2xTnkVracgBuIm1GydFe1lqsNBo=
-		</data>
-		<key>LegicMobileSdk.framework/Modules/module.modulemap</key>
-		<data>
-		X5gAdUfAHuobkFhPMxEl45ZUUq8=
+		j6Pritg+Yhcs8w0hOc57eoNZrAY=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm.swiftsourceinfo</key>
 		<data>
-		7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+		bIQwUer31lyEcvbGoGJUBr5sZzg=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
 		<data>
-		3MiOjB93K1pWqVlVlNUkgva8AL0=
+		pVoul3X9QanZ8d8Df47GMNALyEs=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm64.swiftsourceinfo</key>
 		<data>
-		3MiOjB93K1pWqVlVlNUkgva8AL0=
+		pVoul3X9QanZ8d8Df47GMNALyEs=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/Project/armv7-apple-ios.swiftsourceinfo</key>
 		<data>
-		7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+		bIQwUer31lyEcvbGoGJUBr5sZzg=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/Project/armv7.swiftsourceinfo</key>
 		<data>
-		7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+		bIQwUer31lyEcvbGoGJUBr5sZzg=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm.swiftdoc</key>
 		<data>
-		dYjkHSQHN0E0joI9lt7UvuB5z0E=
+		TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		mMR0xtC0kydkTbonF81q9DodqXE=
+		qn59qGVtSSSujCcGGI8djFD1m8M=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<data>
-		lkHCnCXkyKJHp35O0auPFrmwI8w=
+		3FGQ1OT89UbrFq9eOSPValLP0mA=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		UKRTvFYt9rIyj5itebdh4BvL99s=
+		nnLQc3E+DQELtQbi98jS4lV4FPY=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		lkHCnCXkyKJHp35O0auPFrmwI8w=
+		3FGQ1OT89UbrFq9eOSPValLP0mA=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		UKRTvFYt9rIyj5itebdh4BvL99s=
+		nnLQc3E+DQELtQbi98jS4lV4FPY=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/armv7-apple-ios.swiftdoc</key>
 		<data>
-		dYjkHSQHN0E0joI9lt7UvuB5z0E=
+		TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/armv7-apple-ios.swiftmodule</key>
 		<data>
-		mMR0xtC0kydkTbonF81q9DodqXE=
+		qn59qGVtSSSujCcGGI8djFD1m8M=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/armv7.swiftdoc</key>
 		<data>
-		dYjkHSQHN0E0joI9lt7UvuB5z0E=
+		TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 		</data>
 		<key>Modules/StratisSDK.swiftmodule/armv7.swiftmodule</key>
 		<data>
-		mMR0xtC0kydkTbonF81q9DodqXE=
+		qn59qGVtSSSujCcGGI8djFD1m8M=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -222,506 +102,176 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			9E7pSGU+EuVoUHJsChPKtI9CvEI=
+			YBDxnq+s5/T2fDakgnPu3WhufjU=
 			</data>
 			<key>hash2</key>
 			<data>
-			2pHduAO/3rmI6PovzFDcoR7Tsk7i8jcyfGD59h4Blz4=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdk.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			tVVCFq119eFSOQjROKxLPe6Daf0=
-			</data>
-			<key>hash2</key>
-			<data>
-			OgrRSIN41d6lKyyncNw2GzMKK9saUaaIHG3MrQmN+CI=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkBaseEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			DSih5YHrTPZuoC8lUYb2CoL2M54=
-			</data>
-			<key>hash2</key>
-			<data>
-			VSJJ0e1lG0YnQ3l3qGfC2ocXKKC8PrjKvZ1NKd9gT4A=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkError.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			pEFsgvFqeQknn8N8HHd4lqHPt3A=
-			</data>
-			<key>hash2</key>
-			<data>
-			kxBSs8J1g56rdipG6L/uxXS0whHPhw+024X66uc9NaU=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkErrorCode.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			4AgJ0ldVx28Li/VW95xVWGUsk8M=
-			</data>
-			<key>hash2</key>
-			<data>
-			GvGQAWXmME//+qmZ15D6ZR76RyJR0MfN65n4HvIM2HI=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkErrorReason.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			0XrEZTYp05PLGkne1z3hzr7s9pE=
-			</data>
-			<key>hash2</key>
-			<data>
-			nrjq1yJhjqIByldA2gLKp1TDGhhONdHOu7FpokYyfnE=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ldpFWOru4JHF4EbeExFgDz04jxQ=
-			</data>
-			<key>hash2</key>
-			<data>
-			6jlFrxiNhDJlB+WnnHVwIQjf28oPcVAs0hWudwOuXTk=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkFileAddressingMode.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ZxCO6R5v9HcCXCbvmYXBjAWj5dE=
-			</data>
-			<key>hash2</key>
-			<data>
-			WbiLlEl04lD9qolDwUoVUrOl7Vpuld9v+vt+iI3sAQ4=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkLcConfirmationMethod.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			DsamtNXx5BJC1EU0efARZZ8ColI=
-			</data>
-			<key>hash2</key>
-			<data>
-			+n7Dv1Q9+D7mToTDQ5L1TW6MxChrieq389E3+lezNbs=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkLcMessageMode.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			wESUefn872FHIzAxB6DA4ONQos4=
-			</data>
-			<key>hash2</key>
-			<data>
-			r+RA0IotZ4VWwVm/0P4r6XvVG4hElrOHgOlS3szrBO0=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkManager.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			XD5nxOFhVtPp9+urNGXQpI2oJFg=
-			</data>
-			<key>hash2</key>
-			<data>
-			e6dgDtp3JWO/jgvfhUJuEwb5QY/6IvLXlG0Ol5tS4rc=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkManagerFactory.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ydkBZ8xayUqPw9gSa1vyQL3cIyM=
-			</data>
-			<key>hash2</key>
-			<data>
-			WClXPc7Z3pPrqCfb7CPuaVuhYJPHgcoPFxBt4PFisWU=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFile.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			wRvfTqjz8Z2fxgb2sqXnLViy4SM=
-			</data>
-			<key>hash2</key>
-			<data>
-			u0GPxP9fP4gXMnzj8iMghMka6EqdXtjWj8xsrR4I3n4=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileDefaultMode.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			JjyQWDK5DbRq1+y1G1yIJOiDa0c=
-			</data>
-			<key>hash2</key>
-			<data>
-			vOAgGTJTR+ddhs+riT/7cfl3UH7u7SYKtubOUjP/Xro=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			QrBQu0rI9yq3Y8I1j5z7gTi26ug=
-			</data>
-			<key>hash2</key>
-			<data>
-			J+r3EtEAS96/Uf+KKNidIM14yLiEpnO2wPbWPI9IqMQ=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileMetaValue.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			pvyfrrIUtQaE3Gk14qVi88ci6pc=
-			</data>
-			<key>hash2</key>
-			<data>
-			h/IdRdKROyrfu5p/YbvIg8uDlByaL1ZEhJYrfBtybWQ=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileMetaValueType.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			8/j+iyzE02HrdIrv9zCRR3AMdcg=
-			</data>
-			<key>hash2</key>
-			<data>
-			I/tvidVP2C5X7PsoBss5UVEVjtsIOSAC/PBoZI+/jgU=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileParameter.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			wpO+9rhm2ipq7UQeQwdspv9Fiyo=
-			</data>
-			<key>hash2</key>
-			<data>
-			xjl7WQc0z7rMmqer2hkzIRdKxmBZV28LaiX+igx+d2w=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonFileState.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			UHav9d/OF+mXORTscCS1um+De+I=
-			</data>
-			<key>hash2</key>
-			<data>
-			ljQbigJ5zxkCGz+7LJKGmNCVfjlyR09Yb71lziLvom8=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkNeonSubFile.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			BRBJdTDVBRrC34CPutwdO4qv7+U=
-			</data>
-			<key>hash2</key>
-			<data>
-			NWrsAqgZryRvsfPt9J361eEYoC5W7F61Vj+pmE8+pa0=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkPasswordEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			x7kj1wj8ZHlAOviIdEuoIUrCLWA=
-			</data>
-			<key>hash2</key>
-			<data>
-			Hp/ZmgQOC6nx3+RsgfEu3bdAjTEHPlLv2BPoQcXY5Hg=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkPushType.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Ne7PbuWFMuFCAH9D2+dEV4nMiUw=
-			</data>
-			<key>hash2</key>
-			<data>
-			vN5wYQnkCnDFWCI3zhPi455Y8MwApvw55P5IFF+yALA=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkReaderEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			U58rPjot+y14ELNJUlazyiJRow8=
-			</data>
-			<key>hash2</key>
-			<data>
-			jfqkqowxh2YoKvmBMOJkwRykInOKGheeLQFpqFO6wec=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRegistrationEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Udwrawmc1sHTLyUAKBEMdJynMV0=
-			</data>
-			<key>hash2</key>
-			<data>
-			6Atbdo+IqvMLmXUGoTKbJauYZdfQud5+g3287TeKMZA=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRfInterface.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			YkM3uqkfZ2u5wVk1BcmzUdz6W5M=
-			</data>
-			<key>hash2</key>
-			<data>
-			V+XxNRWVAtIf29BD/GGScddWzDEnjdoVWbqoAitAFn8=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkRfInterfaceState.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			zO6NUvlyquSlk5vat5UOt2j0g74=
-			</data>
-			<key>hash2</key>
-			<data>
-			w12kGs7sek4VUr+vc+CPdVlJVX9fNxF5mGC2YVC+984=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkStatus.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			hyGVZwlCKHV46mxGvBonPDcXBRM=
-			</data>
-			<key>hash2</key>
-			<data>
-			7nNFEpWIXjiVOH47yL/4Aioa1cqGZapF0kLqTTw9s40=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Headers/LegicMobileSdkSynchronizeEventDelegate.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			lU5Ie4525ETTk9ZErrx3Wzmu0zg=
-			</data>
-			<key>hash2</key>
-			<data>
-			G1TBftXO/jiwo8lgAoJgj4VWEFhlAmzXgpZIKD9Su8M=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Info.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ewsj1aXvP5wFAkyJrOMh7T4Jxm0=
-			</data>
-			<key>hash2</key>
-			<data>
-			4rsPOZqmgFs7hc4mwHoxiWBD/kNumlKh7XZnwRPKQHs=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/LegicMobileSdk</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			2xTnkVracgBuIm1GydFe1lqsNBo=
-			</data>
-			<key>hash2</key>
-			<data>
-			uwd0Nz+sPXtVGowCpV8T4wMU+MVrPCwL7oVQdqyLBOU=
-			</data>
-		</dict>
-		<key>LegicMobileSdk.framework/Modules/module.modulemap</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			X5gAdUfAHuobkFhPMxEl45ZUUq8=
-			</data>
-			<key>hash2</key>
-			<data>
-			bZUvLjBRub1w+tlGIqbVX7TzjAmt0aPrLAXnVwjJlCc=
+			miJCXmPtNyBr3UxJxXCwwoX262KnSqrdcl+aC3S/f04=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm.swiftsourceinfo</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+			bIQwUer31lyEcvbGoGJUBr5sZzg=
 			</data>
 			<key>hash2</key>
 			<data>
-			7ftlw9Jx7x893KpOZfJcrFDYbIJuVptOhV6fpYdJXD4=
+			6qJZTG2gVaig9e4Of4gpdfJzrbuTxkC2Gi+ZNcNTHOQ=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			3MiOjB93K1pWqVlVlNUkgva8AL0=
+			pVoul3X9QanZ8d8Df47GMNALyEs=
 			</data>
 			<key>hash2</key>
 			<data>
-			gzClTY76p+gBcO05cWvcduODU5D51rji4tOHJ9CsYRs=
+			qoOGEC25H9T1FByI0RiC6KeiRexcH6FNezcA959sQvo=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/Project/arm64.swiftsourceinfo</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			3MiOjB93K1pWqVlVlNUkgva8AL0=
+			pVoul3X9QanZ8d8Df47GMNALyEs=
 			</data>
 			<key>hash2</key>
 			<data>
-			gzClTY76p+gBcO05cWvcduODU5D51rji4tOHJ9CsYRs=
+			qoOGEC25H9T1FByI0RiC6KeiRexcH6FNezcA959sQvo=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/Project/armv7-apple-ios.swiftsourceinfo</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+			bIQwUer31lyEcvbGoGJUBr5sZzg=
 			</data>
 			<key>hash2</key>
 			<data>
-			7ftlw9Jx7x893KpOZfJcrFDYbIJuVptOhV6fpYdJXD4=
+			6qJZTG2gVaig9e4Of4gpdfJzrbuTxkC2Gi+ZNcNTHOQ=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/Project/armv7.swiftsourceinfo</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			7Y5lGuEKXeIAit4dCTfxypqjXJ0=
+			bIQwUer31lyEcvbGoGJUBr5sZzg=
 			</data>
 			<key>hash2</key>
 			<data>
-			7ftlw9Jx7x893KpOZfJcrFDYbIJuVptOhV6fpYdJXD4=
+			6qJZTG2gVaig9e4Of4gpdfJzrbuTxkC2Gi+ZNcNTHOQ=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			dYjkHSQHN0E0joI9lt7UvuB5z0E=
+			TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 			</data>
 			<key>hash2</key>
 			<data>
-			iMDCvDmHJpy3UikSa4iJ0B2iWmJLDuvgi+A5kOjcmog=
+			2l3Df2IwIbv8Ktdz7DdHJbtbaBYr63gfKeHEsdbdMOA=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			mMR0xtC0kydkTbonF81q9DodqXE=
+			qn59qGVtSSSujCcGGI8djFD1m8M=
 			</data>
 			<key>hash2</key>
 			<data>
-			8Fepdm4SzIqAs7kk1uEeDqvateIaMhj5XWEKQFY5o4w=
+			8mHk35+9j+eZbQIPvYTV0xJiN3LrnbOkPLQP/R46Yt0=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			lkHCnCXkyKJHp35O0auPFrmwI8w=
+			3FGQ1OT89UbrFq9eOSPValLP0mA=
 			</data>
 			<key>hash2</key>
 			<data>
-			pWoXM6nIDW9tVYdZnm3YUujCHsqPategNjkto16BMQc=
+			eYf+zQLj+Ev/xhINJfRbXUhOxg+lCGPwD0uiqV4suUU=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			UKRTvFYt9rIyj5itebdh4BvL99s=
+			nnLQc3E+DQELtQbi98jS4lV4FPY=
 			</data>
 			<key>hash2</key>
 			<data>
-			ybFJv8sVRXk4R/Xb3GMse5w3YrOt9r/e9D8BjKODsa4=
+			YCZ9Tn+RGV6PMrS427gABnNOmi9b2DnaBOEgqtUyH7I=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm64.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			lkHCnCXkyKJHp35O0auPFrmwI8w=
+			3FGQ1OT89UbrFq9eOSPValLP0mA=
 			</data>
 			<key>hash2</key>
 			<data>
-			pWoXM6nIDW9tVYdZnm3YUujCHsqPategNjkto16BMQc=
+			eYf+zQLj+Ev/xhINJfRbXUhOxg+lCGPwD0uiqV4suUU=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/arm64.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			UKRTvFYt9rIyj5itebdh4BvL99s=
+			nnLQc3E+DQELtQbi98jS4lV4FPY=
 			</data>
 			<key>hash2</key>
 			<data>
-			ybFJv8sVRXk4R/Xb3GMse5w3YrOt9r/e9D8BjKODsa4=
+			YCZ9Tn+RGV6PMrS427gABnNOmi9b2DnaBOEgqtUyH7I=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/armv7-apple-ios.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			dYjkHSQHN0E0joI9lt7UvuB5z0E=
+			TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 			</data>
 			<key>hash2</key>
 			<data>
-			iMDCvDmHJpy3UikSa4iJ0B2iWmJLDuvgi+A5kOjcmog=
+			2l3Df2IwIbv8Ktdz7DdHJbtbaBYr63gfKeHEsdbdMOA=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/armv7-apple-ios.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			mMR0xtC0kydkTbonF81q9DodqXE=
+			qn59qGVtSSSujCcGGI8djFD1m8M=
 			</data>
 			<key>hash2</key>
 			<data>
-			8Fepdm4SzIqAs7kk1uEeDqvateIaMhj5XWEKQFY5o4w=
+			8mHk35+9j+eZbQIPvYTV0xJiN3LrnbOkPLQP/R46Yt0=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/armv7.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			dYjkHSQHN0E0joI9lt7UvuB5z0E=
+			TgcIrKKKyL37sg5sjDh2OLr2v8Q=
 			</data>
 			<key>hash2</key>
 			<data>
-			iMDCvDmHJpy3UikSa4iJ0B2iWmJLDuvgi+A5kOjcmog=
+			2l3Df2IwIbv8Ktdz7DdHJbtbaBYr63gfKeHEsdbdMOA=
 			</data>
 		</dict>
 		<key>Modules/StratisSDK.swiftmodule/armv7.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			mMR0xtC0kydkTbonF81q9DodqXE=
+			qn59qGVtSSSujCcGGI8djFD1m8M=
 			</data>
 			<key>hash2</key>
 			<data>
-			8Fepdm4SzIqAs7kk1uEeDqvateIaMhj5XWEKQFY5o4w=
+			8mHk35+9j+eZbQIPvYTV0xJiN3LrnbOkPLQP/R46Yt0=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
