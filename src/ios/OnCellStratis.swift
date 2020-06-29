@@ -19,23 +19,25 @@ import Bugsnag
         let accessToken = command.arguments[1] as? String ?? ""
         let propertyID = command.arguments[2] as? String ?? ""
 
-        Bugsnag.setBreadcrumbCapacity(50)
-        Bugsnag.leaveBreadcrumb(withMessage: "initSDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
+        if stratisSdk == nil { // only actually init the SDK if it hasn't been done already; initializing multiple times causes lock activation to stall
+            Bugsnag.setBreadcrumbCapacity(50)
+            Bugsnag.leaveBreadcrumb(withMessage: "Initializing Stratis SDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
 
-        var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
-        if serverEnvironmentString == "PROD" {
-            serverEnv = ServerEnvironment.PROD;
+            var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
+            if serverEnvironmentString == "PROD" {
+                serverEnv = ServerEnvironment.PROD;
+            }
+
+            let configuration = Configuration(
+                serverEnvironment: serverEnv,
+                accessToken: accessToken,
+                propertyID: propertyID,
+                remoteLoggingEnabled: true,
+                loggingMetadata: ["app": "OnCell"]
+            )
+
+            stratisSdk = StratisSDK(configuration: configuration)
         }
-
-        let configuration = Configuration(
-            serverEnvironment: serverEnv,
-            accessToken: accessToken,
-            propertyID: propertyID,
-            remoteLoggingEnabled: true,
-            loggingMetadata: ["app": "OnCell"]
-        )
-
-        stratisSdk = StratisSDK(configuration: configuration)
         
         self.accessibleLocks = [StratisLock]()
         self.discoveredLocks = [StratisLock]()
@@ -148,7 +150,7 @@ import Bugsnag
                     foundLock = true
                     let onCellStratisDeviceActivationDelegate = OnCellStratisDeviceActivationDelegate(onCellStratis: self, callbackId: command.callbackId)
                     deviceToActivate.activationDelegate = onCellStratisDeviceActivationDelegate
-                    NSLog("Activating lock...")
+                    NSLog("Calling activate() on lock \(lockId)...")
                     deviceToActivate.activate()
                     // return error to JS and send log to Bugsnag if we haven't unlocked device in 20 seconds
                     onCellStratisDeviceActivationDelegate.startActivationTimer()
