@@ -46,7 +46,7 @@ public class OnCellStratis extends CordovaPlugin {
     private static final String TAG = "OnCellStratis";
     private StratisSDK stratisSDK;
     private Collection<StratisLock> accessibleLocks;
-    private List<StratisLock> discoveredLocks;
+    private HashSet<StratisLock> discoveredLocks;
 
     public OnCellStratis() {
         super();
@@ -77,6 +77,7 @@ public class OnCellStratis extends CordovaPlugin {
                 return true;
             case scanLocks:
                 this.scanLocks(callbackContext);
+//                this.scanLocksAfterDelay(callbackContext, 5); // Use for testing purposes
                 return true;
             case activateLock:
                 String lockId = args.getString(0);
@@ -145,6 +146,7 @@ public class OnCellStratis extends CordovaPlugin {
                     Bugsnag.leaveBreadcrumb("accessibleLocks: " + locksJson.toString());
                 } else {
                     bugsnagNotify("No accessible locks found");
+                    Log.d(TAG, "No accessible locks found");
                 }
                 callbackSuccess(callbackContext, locksJson);
             } else {
@@ -153,11 +155,25 @@ public class OnCellStratis extends CordovaPlugin {
         }
     }
 
+    public void scanLocksAfterDelay(CallbackContext callbackContext, Integer secondsDelay) {
+        // Used only for testing purposes
+        Log.d(TAG, "Delaying scanLocks...");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Calling scanLocks now");
+                    scanLocks(callbackContext);
+            }
+        };
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, secondsDelay*1000);
+    }
+
 
     public void scanLocks(CallbackContext callbackContext) {
         Log.d(TAG, "scanLocks");
         if (accessibleLocks != null) {
-            discoveredLocks = new ArrayList<StratisLock>();
+            discoveredLocks = new HashSet<StratisLock>();
             stratisSDK.setDeviceDiscoveryListener(new OnCellStratisDeviceDiscoveryListener(callbackContext));
             stratisSDK.discoverActionableDevices(accessibleLocks);
         } else {
@@ -186,11 +202,16 @@ public class OnCellStratis extends CordovaPlugin {
             Log.d(TAG, "stratisDiscoveryCompleted");
             JSONArray locksJson = new JSONArray();
             if (!discoveredLocks.isEmpty()) {
-                locksJson = getLocksAsJson(discoveredLocks);
+                ArrayList sortedDiscoveredLocks = new ArrayList<>(discoveredLocks);
+                // Sort in descending order with highest RSSI (closest lock) first
+                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> l2.getRssi().intValue() - l1.getRssi().intValue();
+                Collections.sort(sortedDiscoveredLocks, compareByRssi);
+                locksJson = getLocksAsJson(sortedDiscoveredLocks);
                 Log.d(TAG, "discoveredLocks: " + locksJson.toString());
                 Bugsnag.leaveBreadcrumb("discoveredLocks: " + locksJson.toString());
             } else {
                 bugsnagNotify("No scanned locks discovered");
+                Log.d(TAG, "No scanned locks discovered");
             }
             callbackSuccess(callbackContext, locksJson);
         }

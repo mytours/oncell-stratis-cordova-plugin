@@ -19,25 +19,25 @@ import Bugsnag
         let accessToken = command.arguments[1] as? String ?? ""
         let propertyID = command.arguments[2] as? String ?? ""
 
-        if stratisSdk == nil { // only actually init the SDK if it hasn't been done already; initializing multiple times causes lock activation to stall
-            Bugsnag.setBreadcrumbCapacity(50)
-            Bugsnag.leaveBreadcrumb(withMessage: "Initializing Stratis SDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
+        Bugsnag.setBreadcrumbCapacity(50)
+        Bugsnag.leaveBreadcrumb(withMessage: "Initializing Stratis SDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
 
-            var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
-            if serverEnvironmentString == "PROD" {
-                serverEnv = ServerEnvironment.PROD;
-            }
-
-            let configuration = Configuration(
-                serverEnvironment: serverEnv,
-                accessToken: accessToken,
-                propertyID: propertyID,
-                remoteLoggingEnabled: true,
-                loggingMetadata: ["app": "OnCell"]
-            )
-
-            stratisSdk = StratisSDK(configuration: configuration)
+        var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
+        if serverEnvironmentString == "PROD" {
+            serverEnv = ServerEnvironment.PROD;
         }
+
+        let configuration = Configuration(
+            serverEnvironment: serverEnv,
+            accessToken: accessToken,
+            propertyID: propertyID,
+            remoteLoggingEnabled: true,
+            loggingMetadata: ["app": "OnCell"]
+        )
+
+//        if stratisSdk == nil { // workaround for SDK bug where multiple StratisSDK inits cause lock activation to stall
+            stratisSdk = StratisSDK(configuration: configuration)
+//        }
         
         self.accessibleLocks = [StratisLock]()
         self.discoveredLocks = [StratisLock]()
@@ -242,7 +242,8 @@ import Bugsnag
     func getLocksAsJson(locks: [StratisLock]) -> String {
         var jsonString = "[]"
         if !locks.isEmpty {
-            let codableLocks = locks.compactMap({ $0.toCodable() })
+            var codableLocks = locks.compactMap({ $0.toCodable() })
+            codableLocks.sort(by: {$0.rssi > $1.rssi}) // sort by RSSI in descending order
             let encoder = JSONEncoder()
             if let jsonData = try? encoder.encode(codableLocks) {
                 jsonString = String(data: jsonData, encoding: .utf8) ?? "[]"
@@ -261,17 +262,24 @@ struct CodableLock: Codable {
     var name: String
     var model: String
     var isActionable: Bool
+    var rssi: Int
 }
 
 
 extension StratisLock {
     
     func toCodable() -> CodableLock{
+        var rssi = -100;
+        // Add rssi to CodableLock if available
+        if let bleLock = self as? BLELock {
+            rssi = bleLock.rssi?.intValue ?? -100;
+        }
         let codableLock = CodableLock(
             identifier: self.identifier,
             name: self.name,
             model: self.model,
-            isActionable: self.actionable
+            isActionable: self.actionable,
+            rssi: rssi
         )
         
         return codableLock
