@@ -2,3 +2,6 @@
 src/ios/StratisSDK/StratisSDK.framework/StratisSDK filter=lfs diff=lfs merge=lfs -text
 src/ios/StratisSDK/LegicMobileSdk.framework/LegicMobileSdk filter=lfs diff=lfs merge=lfs -text
 src/ios/StratisSDK/StratisLibrary.framework/StratisLibrary filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/SaltoJustINMobile.framework/SaltoJustINMobile filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/SaltoJustINMobile.framework/Versions/A/SaltoJustINMobile filter=lfs diff=lfs merge=lfs -text
+src/ios/StratisSDK/SaltoJustINMobile.framework/Versions/Current/SaltoJustINMobile filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,6 @@
+framework module SaltoJustINMobile {
+  umbrella header "SSJustinMobile.h"
+
+  export *
+  module * { export * }
+}
