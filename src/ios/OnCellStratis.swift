@@ -20,24 +20,29 @@ import Bugsnag
         let propertyID = command.arguments[2] as? String ?? ""
 
         Bugsnag.setBreadcrumbCapacity(50)
-        Bugsnag.leaveBreadcrumb(withMessage: "Initializing Stratis SDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
+        
+        if stratisSdk == nil { // only initialize the SDK once
+            Bugsnag.leaveBreadcrumb(withMessage: "Initializing Stratis SDK serverEnvironmentString: \(serverEnvironmentString), accessToken: \(accessToken), propertyId: \(propertyID)")
 
-        var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
-        if serverEnvironmentString == "PROD" {
-            serverEnv = ServerEnvironment.PROD;
-        }
+            var serverEnv = ServerEnvironment.SANDBOX // Sandbox by default
+            if serverEnvironmentString == "PROD" {
+                serverEnv = ServerEnvironment.PROD
+            }
 
-        let configuration = Configuration(
-            serverEnvironment: serverEnv,
-            accessToken: accessToken,
-            propertyID: propertyID,
-            remoteLoggingEnabled: true,
-            loggingMetadata: ["app": "OnCell"]
-        )
-
-//        if stratisSdk == nil { // workaround for SDK bug where multiple StratisSDK inits cause lock activation to stall
+            let configuration = Configuration(
+                serverEnvironment: serverEnv,
+                accessToken: accessToken,
+                propertyID: propertyID,
+                remoteLoggingEnabled: true,
+                loggingMetadata: ["app": "OnCell"]
+            )
+            
             stratisSdk = StratisSDK(configuration: configuration)
-//        }
+        } else { // if SDK is already initialized, just update accessToken and propertyID
+            Bugsnag.leaveBreadcrumb(withMessage: "Refreshing Stratis SDK accessToken: \(accessToken), propertyId: \(propertyID)")
+            stratisSdk.setAccessToken(token: accessToken)
+            stratisSdk.setPropertyID(propertyID)
+        }
         
         self.accessibleLocks = [StratisLock]()
         self.discoveredLocks = [StratisLock]()
@@ -179,17 +184,17 @@ import Bugsnag
             NSLog("stratisDeviceActivationDidPostEvent with callbackId: \(self.callbackId), event: \(event), forDevice: \(device), error: \(String(describing: error))")
             if error == nil {
                 if event.rawValue == ActivationEvent.activationStarted.rawValue {
-                    NSLog("activationStarted");
+                    NSLog("activationStarted")
                 } else if event.rawValue == ActivationEvent.activationComplete.rawValue {
-                    NSLog("activationComplete");
+                    NSLog("activationComplete")
                     onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: nil)
-                    responseSent = true;
+                    responseSent = true
                 } else if event.rawValue == ActivationEvent.presentDeviceToLock.rawValue {
-                    NSLog("presentDeviceToLock");
+                    NSLog("presentDeviceToLock")
                 }
             } else {
                 onCellStratis.callbackError(callbackId: callbackId, errorMessage: error.debugDescription)
-                responseSent = true;
+                responseSent = true
             }
         }
         
@@ -269,10 +274,10 @@ struct CodableLock: Codable {
 extension StratisLock {
     
     func toCodable() -> CodableLock{
-        var rssi = -100;
+        var rssi = -100
         // Add rssi to CodableLock if available
         if let bleLock = self as? BLELock {
-            rssi = bleLock.rssi?.intValue ?? -100;
+            rssi = bleLock.rssi?.intValue ?? -100
         }
         let codableLock = CodableLock(
             identifier: self.identifier,
