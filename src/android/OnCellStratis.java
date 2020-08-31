@@ -92,29 +92,38 @@ public class OnCellStratis extends CordovaPlugin {
     /* Begin command functions */
 
     public void initSDK(String serverEnvironmentString, String accessToken, String propertyId, CallbackContext callbackContext) {
-        Log.d(TAG, "initSDK serverEnvironmentString: " + serverEnvironmentString + ", accessToken: " + accessToken + ", propertyId: " + propertyId);
-        Bugsnag.leaveBreadcrumb("initSDK serverEnvironmentString: " + serverEnvironmentString + ", accessToken: " + accessToken + ", propertyId: " + propertyId);
+        Log.d(TAG, "initSDK");
 
-        if (isValidServerEnvironment(serverEnvironmentString) && accessToken != null && propertyId != null) {
-            MainActivity mainActivity = (MainActivity) cordova.getActivity();
-            Context appContext = mainActivity.getApplicationContext();
-            Map<String, String> logMap = new HashMap<String, String>();
-            logMap.put("app", "OnCell");
+        if (stratisSDK == null) { // Only initialize once
+            Bugsnag.leaveBreadcrumb("Initializing StratisSDK serverEnvironmentString: " + serverEnvironmentString + ", accessToken: " + accessToken + ", propertyId: " + propertyId);
+            
+            if (isValidServerEnvironment(serverEnvironmentString) && accessToken != null && propertyId != null) {
+                MainActivity mainActivity = (MainActivity) cordova.getActivity();
+                Context appContext = mainActivity.getApplicationContext();
+                Map<String, String> logMap = new HashMap<String, String>();
+                logMap.put("app", "OnCell");
 
-            Configuration configuration = new Configuration(
-                    ServerEnvironment.valueOf(serverEnvironmentString),
-                    accessToken,
-                    true,
-                    logMap,
-                    propertyId
-            );
+                Configuration configuration = new Configuration(
+                        ServerEnvironment.valueOf(serverEnvironmentString),
+                        accessToken,
+                        true,
+                        logMap,
+                        propertyId
+                );
 
-            stratisSDK = new StratisSDK(appContext, configuration);
+                stratisSDK = new StratisSDK(appContext, configuration);
 
-            // return successfully
+                // return successfully
+                callbackSuccess(callbackContext, null);
+            } else { // return with error
+                callbackError(callbackContext, "Missing or invalid parameters when initializing Stratis SDK");
+            }
+        } else {
+            // if SDK is already initialized, just refresh the access token and property ID
+            Bugsnag.leaveBreadcrumb("Refreshing Stratis SDK accessToken: " + accessToken + ", propertyId: " + propertyId);
+            stratisSDK.setAccessToken(accessToken);
+            stratisSDK.setPropertyID(propertyId);
             callbackSuccess(callbackContext, null);
-        } else { // return with error
-            callbackError(callbackContext, "Missing or invalid parameters when initializing Stratis SDK");
         }
     }
 
