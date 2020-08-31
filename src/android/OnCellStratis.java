@@ -22,6 +22,9 @@ import com.google.gson.FieldAttributes;
 import java.lang.Runnable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -39,6 +42,7 @@ import com.stratisiot.stratissdk.listener.StratisDeviceAccessListener;
 import com.stratisiot.stratissdk.listener.StratisDeviceActivationListener;
 import com.stratisiot.stratissdk.listener.StratisDeviceDiscoveryListener;
 import com.stratisiot.stratissdk.model.lock.StratisLock;
+import com.stratisiot.stratissdk.model.lock.BLELock;
 
 import com.bugsnag.android.*;
 
