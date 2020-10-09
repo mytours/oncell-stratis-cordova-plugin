@@ -183,13 +183,13 @@ import Bugsnag
         func stratisDeviceActivationDidPostEvent(_ event: StratisLock.ActivationEvent, forDevice device: StratisLock, withError error: StratisError?) {
             NSLog("stratisDeviceActivationDidPostEvent with callbackId: \(self.callbackId), event: \(event), forDevice: \(device), error: \(String(describing: error))")
             if error == nil {
-                if event.rawValue == ActivationEvent.activationStarted.rawValue {
+                if event.rawValue == StratisLock.ActivationEvent.activationStarted.rawValue {
                     NSLog("activationStarted")
-                } else if event.rawValue == ActivationEvent.activationComplete.rawValue {
+                } else if event.rawValue == StratisLock.ActivationEvent.activationComplete.rawValue {
                     NSLog("activationComplete")
                     onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: nil)
                     responseSent = true
-                } else if event.rawValue == ActivationEvent.presentDeviceToLock.rawValue {
+                } else if event.rawValue == StratisLock.ActivationEvent.presentDeviceToLock.rawValue {
                     NSLog("presentDeviceToLock")
                 }
             } else {
