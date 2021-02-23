@@ -1,6 +1,0 @@
-framework module SaltoJustINMobileSDK {
-  umbrella header "SaltoJustINMobileSDK.h"
-
-  export *
-  module * { export * }
-}
