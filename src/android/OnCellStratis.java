@@ -322,34 +322,43 @@ public class OnCellStratis extends CordovaPlugin {
     }
 
 
-    private JSONArray getLocksAsJson(Collection locks) {
-        ExclusionStrategy strategy = new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes field) {
-                if (field.getName().matches("errorAggregator|metaData|advertisementData|bluetoothDevice|authToken")) {
-                    return true;
-                }
-                return false;
-            }
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return false;
-            }
-        };
+    private JSONArray getLocksAsJson(Collection<StratisLock> locks) {
+        Log.d(TAG, "getLocksAsJson");
+        Bugsnag.leaveBreadcrumb("getLocksAsJson");
 
-        Gson gson = new GsonBuilder()
-                .addSerializationExclusionStrategy(strategy)
-                .create();
-        String locksGson = gson.toJson(locks);
+        JSONArray locksJsonArray = new JSONArray();
 
-        JSONArray locksJson = new JSONArray();
-        try {
-            locksJson = new JSONArray(locksGson);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        for (StratisLock lock : locks) {
+            Log.d(TAG, "serializing lock to JSON...");
+            Bugsnag.leaveBreadcrumb("serializing lock to JSON...");
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("isActionable", lock.isActionable());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                jsonObject.put("identifier", lock.getIdentifier());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                jsonObject.put("name", lock.getName());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                jsonObject.put("model", lock.getModel());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            locksJsonArray.put(jsonObject);
         }
 
-        return locksJson;
+        Log.d(TAG, "getLocksAsJson done");
+        Bugsnag.leaveBreadcrumb("getLocksAsJson done");
+
+        return locksJsonArray;
     }
 
 
