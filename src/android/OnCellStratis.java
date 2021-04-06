@@ -14,11 +14,6 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-
 import java.lang.Runnable;
 import java.util.ArrayList;
 import java.util.Collection;
