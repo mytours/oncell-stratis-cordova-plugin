@@ -104,6 +104,8 @@ typedef NS_ENUM(NSInteger, SSJustinErrorCode) {
     kInvalidDataReceivedError = 413,
     /** There has been an authentication error between the mobile phone and the lock. */
     kAuthenticationFailedError = 414,
+    /** Bluetooth feature is not authorized for this application. */
+    kBluetoothNotAuthorizedError = 415,
 };
 
 @end

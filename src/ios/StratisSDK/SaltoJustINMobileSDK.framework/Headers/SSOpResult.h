@@ -53,6 +53,8 @@
     extern unsigned char const AUTH_SUCCESS_PIN_REQUIRED
     // Successful authentication, access rejected and key should be deleted.
     extern unsigned char const AUTH_SUCCESS_CANCELLED_KEY
+    // Successful authentication, access rejected, fingerprint required. Input fingerprint before key.
+    extern unsigned char const AUTH_SUCCESS_FINGER_REQUIRED
     // Successful authentication, key data was processed successfully. Doesn't imply any further outcome.
     extern unsigned char const AUTH_SUCCESS_KEY_PROCESSED
 
@@ -99,6 +101,8 @@ extern unsigned char const AUTH_SUCCESS_WAIT_SECOND_CARD;
 extern unsigned char const AUTH_SUCCESS_PIN_REQUIRED;
 /** Successful authentication, access rejected and key should be deleted. */
 extern unsigned char const AUTH_SUCCESS_CANCELLED_KEY;
+/** Successful authentication, access rejected, fingerprint required. Input fingerprint before key. */
+extern unsigned char const AUTH_SUCCESS_FINGER_REQUIRED;
 /** Successful authentication, key data was processed successfully. Doesn't imply any further outcome. */
 extern unsigned char const AUTH_SUCCESS_KEY_PROCESSED;
 

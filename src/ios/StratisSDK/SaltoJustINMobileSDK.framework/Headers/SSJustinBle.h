@@ -99,6 +99,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     }];
+
+ **Note:** Both callbacks will be executed in the **main thread**.
  
  @param currentKey Key to open the door.
  @param successBlock When the process finishes successfully this block will be called.
@@ -128,6 +130,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
+
+ **Note:** Both callbacks will be executed in the **main thread**.
 
  @param currentKey Key to open the door.
  @param successBlock When the process finishes successfully this block will be called.
@@ -164,6 +168,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     }];
+
+ **Note:** All callbacks will be executed in the **main thread**.
  
  @param currentKey Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
@@ -199,6 +205,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
+
+ **Note:** All callbacks will be executed in the **main thread**.
 
  @param currentKey Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
@@ -238,6 +246,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     }];
+
+ **Note:** All callbacks will be executed in the **main thread**.
  
  @param currentKey Block to obtain the latest Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
@@ -276,6 +286,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
 
+ **Note:** All callbacks will be executed in the **main thread**.
+
  @param currentKey Block to obtain the latest Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
  @param successBlock When the process finishes successfully this block will be called.
@@ -310,6 +322,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
         // Do actions when an error occurred.
     }];
 
+ **Note:** Both callbacks will be executed in the **main thread**.
+
  @param currentKey Key to open the door.
  @param successBlock When the process finishes successfully this block will be called.
  @param errorBlock When any error is found during the opening process this error block will be called.
@@ -336,6 +350,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
+
+ **Note:** Both callbacks will be executed in the **main thread**.
 
  @param currentKey Key to open the door.
  @param successBlock When the process finishes successfully this block will be called.
@@ -371,6 +387,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
         // Do actions when an error occurred.
     }];
 
+ **Note:** All callbacks will be executed in the **main thread**.
+
  @param currentKey Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
  @param successBlock When the process finishes successfully this block will be called.
@@ -403,6 +421,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
+
+ **Note:** All callbacks will be executed in the **main thread**.
 
  @param currentKey Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
@@ -441,6 +461,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
         // Do actions when an error occurred.
     }];
 
+ **Note:** All callbacks will be executed in the **main thread**.
+
  @param currentKey Block to obtain the latest Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.
  @param successBlock When the process finishes successfully this block will be called.
@@ -475,6 +497,8 @@ typedef SSMobileKey* _Nonnull (^SSJustinBleManagerKeyRetriever)(void);
     } failure:^(NSError *error) {
         // Do actions when an error occurred.
     } params:[[SSLockOpeningParams alloc] initWithOpeningMode:kOpeningStandardMode]];
+
+ **Note:** All callbacks will be executed in the **main thread**.
 
  @param currentKey Block to obtain the latest Key to open the door.
  @param peripheralFoundBlock When a SALTO peripheral is found, this block will be called.

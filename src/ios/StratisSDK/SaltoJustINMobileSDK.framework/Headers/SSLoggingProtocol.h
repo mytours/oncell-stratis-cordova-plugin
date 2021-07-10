@@ -1,8 +1,8 @@
 //
-//  SSResult.h
+//  SSLoggingProtocol.h
 //  SaltoJustINMobileSDK
 //
-//  Created by Jon Garate on 18/10/2018.
+//  Created by Jon Garate on 17/12/2018.
 //  Copyright © 2018 Copyright (c) 2017 Salto Systems.
 //  All rights reserved.
 //
@@ -28,32 +28,19 @@
 
 #import <Foundation/Foundation.h>
 
-/**
- Represent the result of a successfully completed opening operation.
+typedef NS_ENUM(NSInteger, SSLoggingLevel) {
+    SSLoggingLevelVerbose,
+    SSLoggingLevelDebug,
+    SSLoggingLevelInfo,
+    SSLoggingLevelWarn,
+    SSLoggingLevelError
+};
 
- @since v2.3
- */
-@interface SSResult : NSObject
-
-/**
-  Authentication operation result
-
-  @return Result code. One of `SSOpResult` codes.
-
-  @since v2.3
- */
-- (NSInteger)getOpResult;
+@protocol SSLoggingProtocol <NSObject>
 
 /**
- Retrieve string of audit trail events.
-
- @return String of audit trail events. Might be nil if there are no events.
-
- @since v2.3
+ Write messge into log.
  */
-- (NSString * _Nullable)getAuditTrailEvents;
-
-- (id _Nullable)initWithOpResult:(NSInteger )opResult
-                auditTrailEvents:(NSString * _Nullable)events;
+- (void)log:(SSLoggingLevel)level msg:(NSString *)msg;
 
 @end

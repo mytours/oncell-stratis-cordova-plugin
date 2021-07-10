@@ -1,8 +1,8 @@
 //
-//  SSResult.h
+//  SSLoggingFactory.h
 //  SaltoJustINMobileSDK
 //
-//  Created by Jon Garate on 18/10/2018.
+//  Created by Jon Garate on 17/12/2018.
 //  Copyright © 2018 Copyright (c) 2017 Salto Systems.
 //  All rights reserved.
 //
@@ -26,34 +26,24 @@
 //. All rights reserved.
 //
 
+#import "SSLoggingProtocol.h"
 #import <Foundation/Foundation.h>
 
-/**
- Represent the result of a successfully completed opening operation.
-
- @since v2.3
- */
-@interface SSResult : NSObject
+@interface SSLoggingFactory : NSObject
 
 /**
-  Authentication operation result
-
-  @return Result code. One of `SSOpResult` codes.
-
-  @since v2.3
+ * Factory singleton
  */
-- (NSInteger)getOpResult;
++ (instancetype)sharedInstance;
 
 /**
- Retrieve string of audit trail events.
-
- @return String of audit trail events. Might be nil if there are no events.
-
- @since v2.3
+ * Set logger protocol instance
  */
-- (NSString * _Nullable)getAuditTrailEvents;
+- (void)addProtocol:(NSObject<SSLoggingProtocol> *)protocol;
 
-- (id _Nullable)initWithOpResult:(NSInteger )opResult
-                auditTrailEvents:(NSString * _Nullable)events;
+/**
+ * @return instance of logger
+ */
+- (NSObject<SSLoggingProtocol> *)logger;
 
 @end
