@@ -229,6 +229,30 @@ public class OnCellStratis extends CordovaPlugin {
             Log.e(TAG, "stratisDiscoveryEncounteredError");
             callbackError(callbackContext, stratisError.getDebugMessage());
         }
+        
+        @Override
+        public void stratisDiscoveryDevicesOutOfRange(@NotNull StratisSDK stratisSDK, @NotNull Collection<? extends StratisLock> collection) {
+            
+        }
+
+        @Override
+        public void stratisDiscoveryUpdatedRSSI(@NotNull StratisSDK stratisSDK, @NotNull Collection<? extends StratisLock> collection) {
+            Log.d(TAG, "stratisDiscoveryCompleted");
+            JSONArray locksJson = new JSONArray();
+            if (!discoveredLocks.isEmpty()) {
+                ArrayList sortedDiscoveredLocks = new ArrayList<>(discoveredLocks);
+                // Sort in descending order with highest RSSI (closest lock) first
+                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> l2.getRssi().intValue() - l1.getRssi().intValue();
+                Collections.sort(sortedDiscoveredLocks, compareByRssi);
+                locksJson = getLocksAsJson(sortedDiscoveredLocks);
+                Log.d(TAG, "discoveredLocks: " + locksJson.toString());
+                Bugsnag.leaveBreadcrumb("discoveredLocks: " + locksJson.toString());
+            } else {
+                bugsnagNotify("No scanned locks discovered");
+                Log.d(TAG, "No scanned locks discovered");
+            }
+            callbackSuccess(callbackContext, locksJson);
+          }
     }
 
 
