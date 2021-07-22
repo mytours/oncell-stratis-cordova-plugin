@@ -1,0 +1,251 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.4.2 (swiftlang-1205.0.28.2 clang-1205.0.19.57)
+// swift-module-flags: -target x86_64-apple-ios11.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name StratisSDK
+import CommonCrypto
+import CoreBluetooth
+import Foundation
+import LeafBle
+import LegicMobileSdk
+import SaltoJustINMobileSDK
+import Security
+@_exported import StratisSDK
+import Swift
+import StratisSDK.keccaktiny
+@objc public protocol MobileKeyDelegate {
+  @objc func mobileKeyServiceGenerated()
+  @objc func mobileKeyServiceRetrieved()
+  @objc func mobileKeyServiceProvisioned()
+  @objc func mobileKeyServiceError(_ error: Swift.String)
+  @objc func running(_ message: Swift.String)
+  @objc func stopped(_ message: Swift.String)
+  @objc func inprogress(_ message: Swift.String)
+  @objc func complete(_ message: Swift.String)
+  @objc func error(_ message: Swift.String)
+  @objc func longRange(_ nearby: Swift.Bool)
+  @objc func nearbyReaders(_ rIdentifiers: [Swift.String])
+}
+public enum UnlockTechnology : Swift.String, Swift.CaseIterable {
+  case engageBLE
+  case dormaKabaBLE
+  case brivoOnline
+  case brivoBLE
+  case saltoBLE
+  case chirp
+  case unknown
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [StratisSDK.UnlockTechnology]
+  public typealias RawValue = Swift.String
+  public static var allCases: [StratisSDK.UnlockTechnology] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc public class BLELock : StratisSDK.StratisLock {
+  public var rssi: Foundation.NSNumber?
+  @objc deinit
+}
+@objc public protocol StratisDeviceDiscoveryDelegate {
+  @objc func stratisDiscoveredDevices(_ stratisSDK: StratisSDK.StratisSDK, devices: [StratisSDK.StratisLock])
+  @objc func stratisDiscoveryEncounteredError(_ stratisSDK: StratisSDK.StratisSDK, error: StratisSDK.StratisError)
+  @objc func stratisDiscoveryUpdatedRSSI(_ stratisSDK: StratisSDK.StratisSDK, devices: [StratisSDK.StratisLock])
+  @objc func stratisDiscoveryDevicesOutOfRange(_ stratisSDK: StratisSDK.StratisSDK, devices: [StratisSDK.StratisLock])
+  @objc @available(*, deprecated, message: "  This will be removed in a future release.\n  Please call stopDiscovery instead of waiting for a timeout.")
+  func stratisDiscoveryCompleted(_ stratisSDK: StratisSDK.StratisSDK)
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ChirpLock : StratisSDK.BLELock {
+  public var schedule: [StratisSDK.ChirpSchedule]
+  public var meta: StratisSDK.ChirpMeta?
+  public var isAvailable: Swift.Bool?
+  override public func activate()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ChirpMeta {
+  public var imageUrl: Swift.String?
+  public var beacons: [StratisSDK.ChirpBeacon]
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ChirpBeacon {
+  public var major: Swift.Int
+  public var minor: Swift.Int
+  public var name: Swift.String?
+  public var accessPointId: Swift.String?
+  public var beaconId: Swift.String?
+  public var createdAt: Swift.String?
+  public var updatedAt: Swift.String?
+  public var uuid: Swift.String?
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ChirpSchedule {
+  public var start: Swift.String?
+  public var end: Swift.String?
+  public var days: [Swift.Int]
+  public var type: Swift.String?
+  @objc deinit
+}
+public struct LogEvent {
+  public init(code: Swift.Int16, category: Swift.String, type: Swift.String, lock: StratisSDK.StratisLock? = nil)
+  public static func builder(event: StratisSDK.LogEvent, lock: StratisSDK.StratisLock?) -> StratisSDK.LogEvent
+}
+public enum LocalDevelopmentOverrides {
+  public static let configuration: [Swift.String : Swift.String]?
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc public class EngageLock : StratisSDK.BLELock {
+  @objc deinit
+}
+@objc public protocol StratisDeviceAccessDelegate {
+  @objc func stratisDeviceAccessRequestCompleted(_ stratisSDK: StratisSDK.StratisSDK, devices: [StratisSDK.StratisLock], error: StratisSDK.StratisError?)
+}
+@objc public class StratisSDK : ObjectiveC.NSObject {
+  weak public var deviceAccessDelegate: StratisSDK.StratisDeviceAccessDelegate?
+  weak public var deviceDiscoveryDelegate: StratisSDK.StratisDeviceDiscoveryDelegate?
+  weak public var mobileKeyDelegate: StratisSDK.MobileKeyDelegate?
+  @objc public init(configuration: StratisSDK.Configuration)
+  public func setAccessToken(token: Swift.String)
+  public func setPropertyID(_ propertyID: Swift.String)
+  public func fetchAccessibleDevices()
+  public func discoverActionableDevices(_ devices: [StratisSDK.StratisLock])
+  public func stopDeviceDiscovery()
+  public func flushLogs()
+  public enum LogLevel : Swift.String {
+    case info
+    case warn
+    case error
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public func logEvent(_ event: StratisSDK.LogEvent, level: StratisSDK.StratisSDK.LogLevel, message: Swift.String?)
+  public func deinitialize()
+  public func registerMobileKey(_ pin: Swift.String)
+  public func prepareMobileKeyService(_ pin: Swift.String) -> Swift.Bool
+  public func startMobileKeyService(_ pin: Swift.String)
+  public func stopMobileKeyService()
+  public func clearMobileKeyCredential()
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension StratisSDK {
+  public func mobileKeyServiceGenerated()
+  public func mobileKeyServiceRetrieved()
+  public func mobileKeyServiceError(_ error: Swift.String)
+  public func mobileKeyServiceProvisioned()
+}
+extension StratisSDK {
+  public func running(_ message: Swift.String)
+  public func stopped(_ message: Swift.String)
+  public func inprogress(_ message: Swift.String)
+  public func complete(_ message: Swift.String)
+  public func error(_ message: Swift.String)
+  public func longRange(_ nearby: Swift.Bool)
+  public func nearbyReaders(_ rIdentifiers: [Swift.String])
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class BrivoOnlineLock : StratisSDK.StratisLock {
+  override public func activate()
+  @objc deinit
+}
+@objc public enum ServerEnvironment : Swift.Int {
+  case LOCAL
+  case DEV
+  case SANDBOX
+  case TEST
+  case PROD
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc public class Configuration : ObjectiveC.NSObject {
+  final public let serverEnvironment: StratisSDK.ServerEnvironment
+  final public let accessToken: Swift.String
+  final public let propertyID: Swift.String
+  final public let remoteLoggingEnabled: Swift.Bool
+  final public let loggingMetadata: [Swift.String : Swift.String]
+  @objc public init(serverEnvironment: StratisSDK.ServerEnvironment, accessToken: Swift.String, propertyID: Swift.String, remoteLoggingEnabled: Swift.Bool, loggingMetadata: [Swift.String : Swift.String])
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @objc public class StratisLock : ObjectiveC.NSObject {
+  final public let model: Swift.String
+  final public let identifier: Swift.String
+  final public let name: Swift.String
+  public var actionable: Swift.Bool
+  weak public var activationDelegate: StratisSDK.StratisDeviceActivationDelegate?
+  final public let unlockTechnology: StratisSDK.UnlockTechnology
+  public func activate()
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc public protocol StratisDeviceActivationDelegate {
+  @objc func stratisDeviceActivationDidPostEvent(_ event: StratisSDK.StratisLock.ActivationEvent, forDevice device: StratisSDK.StratisLock, withError error: StratisSDK.StratisError?)
+}
+extension StratisLock {
+  @objc public enum ActivationEvent : Swift.Int {
+    case activationStarted
+    case presentDeviceToLock
+    case activationComplete
+    case deactivationComplete
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+}
+@objc public class StratisError : ObjectiveC.NSObject, Swift.Error {
+  final public let code: StratisSDK.StratisErrorCode
+  @objc final public let debugMessage: Swift.String?
+  public init(code: StratisSDK.StratisErrorCode, debugMessage: Swift.String?)
+  @objc override dynamic public var debugDescription: Swift.String {
+    @objc get
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum StratisErrorCode : Swift.String {
+  case UNKNOWN
+  case EMPTY_DEVICE_LIST_PROVIDED
+  case BLUETOOTH_POWERED_OFF
+  case BLUETOOTH_UNSUPPORTED
+  case BLUETOOTH_PERMISSIONS_REQUIRED
+  case BLUETOOTH_SCAN_FAILED
+  case BLUETOOTH_CONNECTION_TIMEOUT
+  case DEVICE_ACTIVATION_FAILED
+  case DEVICE_ACTIVATION_UNSUPPORTED
+  case DORMAKABA_DISCOVERY_FAILED
+  case DEVICE_DISCOVERY_REQUIRED
+  case USER_UNAUTHORIZED
+  case SERVER_ERROR
+  case NOT_FOUND
+  case FORBIDDEN
+  case LOCATION_SERVICE_UNAVAILABLE
+  case LOCATION_PERMISSION_DENIED
+  case LOCATION_PERMISSION_REQUIRED
+  case LOCATION_PERMISSION_NOT_DETERMINED
+  case LOCATION_PERMISSION_RESTRICTED
+  case LOCATION_PERMISSION_AUTHORIZED_WHEN_IN_USE
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension StratisSDK.UnlockTechnology : Swift.Equatable {}
+extension StratisSDK.UnlockTechnology : Swift.Hashable {}
+extension StratisSDK.UnlockTechnology : Swift.RawRepresentable {}
+extension StratisSDK.StratisSDK.LogLevel : Swift.Equatable {}
+extension StratisSDK.StratisSDK.LogLevel : Swift.Hashable {}
+extension StratisSDK.StratisSDK.LogLevel : Swift.RawRepresentable {}
+extension StratisSDK.ServerEnvironment : Swift.Equatable {}
+extension StratisSDK.ServerEnvironment : Swift.Hashable {}
+extension StratisSDK.ServerEnvironment : Swift.RawRepresentable {}
+extension StratisSDK.StratisLock.ActivationEvent : Swift.Equatable {}
+extension StratisSDK.StratisLock.ActivationEvent : Swift.Hashable {}
+extension StratisSDK.StratisLock.ActivationEvent : Swift.RawRepresentable {}
+extension StratisSDK.StratisErrorCode : Swift.Equatable {}
+extension StratisSDK.StratisErrorCode : Swift.Hashable {}
+extension StratisSDK.StratisErrorCode : Swift.RawRepresentable {}

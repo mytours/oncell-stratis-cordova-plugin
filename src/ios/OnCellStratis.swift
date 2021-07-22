@@ -103,6 +103,9 @@ import Bugsnag
             stratisSdk.deviceDiscoveryDelegate = self.onCellStratisDeviceDiscoveryDelegate
             
             stratisSdk.discoverActionableDevices(self.accessibleLocks)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) { [self] in
+                self.stratisSdk?.deviceDiscoveryDelegate?.stratisDiscoveryCompleted(stratisSdk)
+            }
         } else {
             callbackError(callbackId: command.callbackId, errorMessage: "Cannot scan locks before getting lock authorization")
         }
@@ -115,6 +118,14 @@ import Bugsnag
         init(onCellStratis: OnCellStratis, callbackId: String) {
             self.onCellStratis = onCellStratis
             self.callbackId = callbackId
+        }
+        
+        func stratisDiscoveryUpdatedRSSI(_ stratisSDK: StratisSDK, devices: [StratisLock]) {
+            NSLog("stratisDiscoveryUpdatedRSSI")
+        }
+        
+        func stratisDiscoveryDevicesOutOfRange(_ stratisSDK: StratisSDK, devices: [StratisLock]) {
+            NSLog("stratisDiscoveryDevicesOutOfRange")
         }
         
         func stratisDiscoveredDevices(_ stratisSDK: StratisSDK, devices: [StratisLock]) {
@@ -132,7 +143,7 @@ import Bugsnag
             if onCellStratis.discoveredLocks.isEmpty {
                 onCellStratis.bugsnagNotify(exceptionName: "lockException", exceptionReason: "No scanned locks discovered")
             }
-            let locksJson = onCellStratis.getLocksAsJson(locks: onCellStratis.discoveredLocks)
+            let locksJson = onCellStratis.getLocksAsJson(locks: onCellStratis.discoveredLocks.sorted{($0 as! BLELock).rssi?.intValue ?? Int.min > ($1 as! BLELock).rssi?.intValue ?? Int.min })
             Bugsnag.leaveBreadcrumb(withMessage: "discoveredLocks: \(locksJson)")
             onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: locksJson)
         }

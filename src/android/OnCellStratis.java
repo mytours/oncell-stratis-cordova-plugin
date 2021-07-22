@@ -177,13 +177,19 @@ public class OnCellStratis extends CordovaPlugin {
         handler.postDelayed(runnable, secondsDelay*1000);
     }
 
-
     public void scanLocks(CallbackContext callbackContext) {
         Log.d(TAG, "scanLocks");
         if (accessibleLocks != null) {
             discoveredLocks = new HashSet<StratisLock>();
-            stratisSDK.setDeviceDiscoveryListener(new OnCellStratisDeviceDiscoveryListener(callbackContext));
+            OnCellStratisDeviceDiscoveryListener l = new OnCellStratisDeviceDiscoveryListener(callbackContext);
+            stratisSDK.setDeviceDiscoveryListener(l);
             stratisSDK.discoverActionableDevices(accessibleLocks);
+            Runnable r = () -> {
+                l.stratisDiscoveryCompleted(stratisSDK);
+                stratisSDK.stopDeviceDiscovery();
+            };
+            Handler handler = new Handler();
+            handler.postDelayed(r, 7000);
         } else {
             callbackError(callbackContext, "Cannot scan locks before getting lock authorization");
         }
@@ -208,7 +214,20 @@ public class OnCellStratis extends CordovaPlugin {
         @Override
         public void stratisDiscoveryCompleted(@NotNull StratisSDK stratisSDK) {
             Log.d(TAG, "stratisDiscoveryCompleted");
-            // functionality moved to stratisDiscoveryUpdatedRSSI
+            JSONArray locksJson = new JSONArray();
+            if (!discoveredLocks.isEmpty()) {
+                ArrayList sortedDiscoveredLocks = new ArrayList<>(discoveredLocks);
+                // Sort in descending order with highest RSSI (closest lock) first
+                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> l2.getRssi().intValue() - l1.getRssi().intValue();
+                Collections.sort(sortedDiscoveredLocks, compareByRssi);
+                locksJson = getLocksAsJson(sortedDiscoveredLocks);
+                Log.d(TAG, "discoveredLocks: " + locksJson.toString());
+                Bugsnag.leaveBreadcrumb("discoveredLocks: " + locksJson.toString());
+            } else {
+                bugsnagNotify("No scanned locks discovered");
+                Log.d(TAG, "No scanned locks discovered");
+            }
+            callbackSuccess(callbackContext, locksJson);
         }
 
         @Override
@@ -225,21 +244,7 @@ public class OnCellStratis extends CordovaPlugin {
         @Override
         public void stratisDiscoveryUpdatedRSSI(@NotNull StratisSDK stratisSDK, @NotNull Collection<? extends StratisLock> collection) {
             Log.d(TAG, "stratisDiscoveryUpdatedRSSI");
-            JSONArray locksJson = new JSONArray();
-            if (!discoveredLocks.isEmpty()) {
-                ArrayList sortedDiscoveredLocks = new ArrayList<>(discoveredLocks);
-                // Sort in descending order with highest RSSI (closest lock) first
-                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> l2.getRssi().intValue() - l1.getRssi().intValue();
-                Collections.sort(sortedDiscoveredLocks, compareByRssi);
-                locksJson = getLocksAsJson(sortedDiscoveredLocks);
-                Log.d(TAG, "discoveredLocks: " + locksJson.toString());
-                Bugsnag.leaveBreadcrumb("discoveredLocks: " + locksJson.toString());
-            } else {
-                bugsnagNotify("No scanned locks discovered");
-                Log.d(TAG, "No scanned locks discovered");
-            }
-            callbackSuccess(callbackContext, locksJson);
-          }
+        }
     }
 
 
