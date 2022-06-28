@@ -218,7 +218,13 @@ public class OnCellStratis extends CordovaPlugin {
             if (!discoveredLocks.isEmpty()) {
                 ArrayList sortedDiscoveredLocks = new ArrayList<>(discoveredLocks);
                 // Sort in descending order with highest RSSI (closest lock) first
-                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> l2.getRssi().intValue() - l1.getRssi().intValue();
+                Comparator<BLELock> compareByRssi = (BLELock l1, BLELock l2) -> {
+                    Number l2Rssi = l2.getRssi();
+                    Number l1Rssi = l1.getRssi();
+                    int l2RssiInt = l2Rssi != null ? l2Rssi.intValue() : -1000;
+                    int l1RssiInt = l1Rssi != null ? l1Rssi.intValue() : -1000;
+                    return l2RssiInt - l1RssiInt;
+                };
                 Collections.sort(sortedDiscoveredLocks, compareByRssi);
                 locksJson = getLocksAsJson(sortedDiscoveredLocks);
                 Log.d(TAG, "discoveredLocks: " + locksJson.toString());
