@@ -143,7 +143,18 @@ import Bugsnag
             if onCellStratis.discoveredLocks.isEmpty {
                 onCellStratis.bugsnagNotify(exceptionName: "lockException", exceptionReason: "No scanned locks discovered")
             }
-            let locksJson = onCellStratis.getLocksAsJson(locks: onCellStratis.discoveredLocks.sorted{($0 as! BLELock).rssi?.intValue ?? Int.min > ($1 as! BLELock).rssi?.intValue ?? Int.min })
+            let locksSorted = onCellStratis.discoveredLocks.sorted {
+                var rssi0: NSNumber? = -1000
+                var rssi1: NSNumber? = -1000
+                if let arg0 = $0 as? BLELock {
+                    rssi0 = arg0.rssi
+                }
+                if let arg1 = $1 as? BLELock {
+                    rssi1 = arg1.rssi
+                }
+                return rssi0?.intValue ?? Int.min > rssi1?.intValue ?? Int.min
+            }
+            let locksJson = onCellStratis.getLocksAsJson(locks: locksSorted)
             Bugsnag.leaveBreadcrumb(withMessage: "discoveredLocks: \(locksJson)")
             onCellStratis.callbackSuccess(callbackId: callbackId, locksJSON: locksJson)
         }
