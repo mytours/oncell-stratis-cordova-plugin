@@ -1,4 +1,4 @@
-import StratisSDK
+import StratisAccessSDK
 import Bugsnag
 
 @objc(OnCellStratis) class OnCellStratis : CDVPlugin {
