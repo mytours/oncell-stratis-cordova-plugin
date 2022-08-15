@@ -215,8 +215,10 @@ import Bugsnag
                     NSLog("presentDeviceToLock")
                 }
             } else {
-                onCellStratis.callbackError(callbackId: callbackId, errorMessage: error.debugDescription)
-                responseSent = true
+                if !self.responseSent {
+                    onCellStratis.callbackError(callbackId: callbackId, errorMessage: error.debugDescription)
+                    responseSent = true
+                }
             }
         }
         
